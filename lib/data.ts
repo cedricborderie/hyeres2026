@@ -7,14 +7,14 @@ export type Category = {
   color: string;
 };
 
-export type Proposal = {
+export interface Proposal {
   id: string;
   categoryId: string;
   title: string;
   summary: string; // Short text for the card
   details: string; // Full text for the modal (can include line breaks)
   external_link?: string;
-};
+}
 
 export const categories: Category[] = [
   {
