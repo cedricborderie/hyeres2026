@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { supabase } from "@/lib/supabase/server";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export interface VoteResult {
   success: boolean;
@@ -18,6 +18,11 @@ export interface VoteResult {
  */
 export async function hasVotedForProposal(proposalId: string): Promise<boolean> {
   try {
+    // If Supabase is not configured, return false (user hasn't voted)
+    if (!isSupabaseConfigured() || !supabase) {
+      return false;
+    }
+
     const cookieStore = await cookies();
     const sessionId = cookieStore.get("voter_session")?.value;
 
@@ -53,6 +58,14 @@ export async function hasVotedForProposal(proposalId: string): Promise<boolean> 
  */
 export async function submitVote(proposalId: string): Promise<VoteResult> {
   try {
+    // If Supabase is not configured, return error
+    if (!isSupabaseConfigured() || !supabase) {
+      return {
+        success: false,
+        message: "Base de données non configurée. Contactez l'administrateur.",
+      };
+    }
+
     // Read session_id from cookies (secure, cannot be manipulated by client)
     const cookieStore = await cookies();
     const sessionId = cookieStore.get("voter_session")?.value;

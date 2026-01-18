@@ -13,6 +13,7 @@ export type Proposal = {
   title: string;
   summary: string; // Short text for the card
   details: string; // Full text for the modal (can include line breaks)
+  external_link?: string;
 };
 
 export const categories: Category[] = [
@@ -193,6 +194,7 @@ export const proposals: Proposal[] = [
     title: "Consultation : Terres Agricoles",
     summary: "Ce volet est en cours de construction.",
     details: "La préservation de la plaine agricole et l'alimentation locale sont des enjeux majeurs. Nous finalisons nos propositions. Vous avez une idée ou une expertise ? Écrivez-nous pour participer.",
+    external_link: "mailto:contact@changerdere.org",
   },
 ];
 
