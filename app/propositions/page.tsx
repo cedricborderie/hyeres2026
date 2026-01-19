@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { categories, getProposalsByCategory, getCategoryById } from "@/lib/data";
 import ProposalCard from "@/components/ProposalCard";
-import { Mail } from "lucide-react";
+import { Mail, ExternalLink } from "lucide-react";
 
 export default function PropositionsPage() {
   const [activeTab, setActiveTab] = useState("habitat");
@@ -52,6 +52,79 @@ export default function PropositionsPage() {
             </button>
           ))}
         </div>
+
+        {/* Information Blocks for Categories */}
+        {activeTab === "habitat" && (
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-6xl mx-auto mb-8"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                1 - Consultez
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 items-center">
+                <p className="text-base md:text-lg text-gray-700">
+                  Consultez les recommandations détaillées des associations Hyéroises sur l'habitat et l'urbanisme.
+                </p>
+                <div className="flex justify-start md:justify-end">
+                  <a
+                    href="https://drive.google.com/file/d/1lCyKY9cLetzoiJaSDc74OW8t0k8Mwwql/view?usp=drive_link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+                  >
+                    Lire les recommandations
+                    <ExternalLink className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+            <div className="max-w-6xl mx-auto mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                2 - Votez
+              </h2>
+            </div>
+          </>
+        )}
+
+        {activeTab === "mobilites" && (
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-6xl mx-auto mb-8"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                1 - Consultez
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 items-center">
+                <p className="text-base md:text-lg text-gray-700">
+                  Consultez les recommandations détaillées des associations Hyéroises sur les mobilités douces et le Vélo.
+                </p>
+                <div className="flex justify-start md:justify-end">
+                  <a
+                    href="https://drive.google.com/file/d/1KBcKctWJaunqVEbUs5kVVLYKuenVWQZE/view?usp=drive_link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+                  >
+                    Lire les recommandations
+                    <ExternalLink className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+            <div className="max-w-6xl mx-auto mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                2 - Votez
+              </h2>
+            </div>
+          </>
+        )}
 
         {/* Proposals Grid */}
         {activeTab === "agriculture" ? (

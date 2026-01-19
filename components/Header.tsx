@@ -9,7 +9,7 @@ export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 relative">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -50,6 +50,16 @@ export default function Header() {
               Propositions
             </Link>
             <Link
+              href="/resultats"
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                pathname === "/resultats"
+                  ? "bg-primary-600 text-white"
+                  : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
+              }`}
+            >
+              Résultats
+            </Link>
+            <Link
               href="/bilan"
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 pathname === "/bilan"
@@ -57,7 +67,7 @@ export default function Header() {
                   : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
               }`}
             >
-              Mon Bilan
+              Mes Priorités
             </Link>
           </nav>
         </div>

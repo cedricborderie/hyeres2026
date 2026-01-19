@@ -47,7 +47,7 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <p className="text-lg font-semibold text-primary-600 mb-6 text-center">
+        <p className="text-lg font-semibold text-primary-600 mb-6 text-center flex flex-col">
           Votre voix compte : donnez votre avis sur nos propositions !
         </p>
 
@@ -76,7 +76,7 @@ export default function Home() {
             <p className="text-base font-medium text-gray-700 leading-6 mb-6">
               Nous associations citoyennes implantées à Hyères depuis de nombreuses années, fortes de nos adhérents et de l'engagement que suscitent nos actions, avons décidé de nous unir pour proposer une vision d'avenir à notre commune.
             </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-base text-gray-700 leading-6 font-medium">
               À l'approche des prochaines élections municipales, nous avons choisi de mettre nos expertises au service du débat public à travers une plateforme de recommandations concrètes.
             </p>
           </section>
@@ -113,12 +113,12 @@ export default function Home() {
 
             {/* Right Column: Nos 3 Champs d'Expertise */}
             <section>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
                 Nos 3 Champs d'Expertise
               </h2>
               <div className="space-y-6">
                 <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Urbanisme et Habitat
                   </h3>
                   <p className="text-gray-700 leading-6 font-medium">
@@ -126,7 +126,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Vélo et Mobilités
                   </h3>
                   <p className="text-gray-700 leading-6 font-medium">
@@ -134,10 +134,10 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Agriculture Saine
                   </h3>
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-gray-700 leading-relaxed font-medium">
                     Promouvoir une agriculture locale et nourricière (propositions portées par l'Écolieu du Plan du Pont).
                   </p>
                 </div>

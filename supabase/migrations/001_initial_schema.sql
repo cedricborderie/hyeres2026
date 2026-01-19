@@ -75,6 +75,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Drop existing triggers if they exist (to allow re-running the migration)
+DROP TRIGGER IF EXISTS trigger_update_vote_count_after_insert ON votes;
+DROP TRIGGER IF EXISTS trigger_update_vote_count_after_delete ON votes;
+DROP TRIGGER IF EXISTS trigger_categories_updated_at ON categories;
+DROP TRIGGER IF EXISTS trigger_proposals_updated_at ON proposals;
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Triggers to automatically update vote_count
 CREATE TRIGGER trigger_update_vote_count_after_insert
 AFTER INSERT ON votes
@@ -85,15 +100,6 @@ CREATE TRIGGER trigger_update_vote_count_after_delete
 AFTER DELETE ON votes
 FOR EACH ROW
 EXECUTE FUNCTION update_proposal_vote_count_on_delete();
-
--- Function to update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
 -- Triggers for updated_at on categories and proposals
 CREATE TRIGGER trigger_categories_updated_at

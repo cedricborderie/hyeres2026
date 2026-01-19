@@ -4,16 +4,29 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Share2, Facebook, MessageCircle } from "lucide-react";
 import { getAllProposals } from "@/lib/data";
-import { getVotedProposals } from "@/lib/utils";
+import { getVotedProposalIds } from "@/app/actions/vote";
 import Link from "next/link";
 
 export default function BilanPage() {
   const [votedProposalIds, setVotedProposalIds] = useState<Set<string>>(
     new Set()
   );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setVotedProposalIds(getVotedProposals());
+    const fetchVotedProposals = async () => {
+      setLoading(true);
+      try {
+        const votedIds = await getVotedProposalIds();
+        setVotedProposalIds(new Set(votedIds));
+      } catch (error) {
+        console.error("Error fetching voted proposals:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVotedProposals();
   }, []);
 
   const allProposals = getAllProposals();
@@ -38,10 +51,20 @@ export default function BilanPage() {
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center">
-            Votre Bilan
+            Mes Priorités
           </h1>
 
-          {votedProposals.length === 0 ? (
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-lg border-2 border-gray-200 p-8 text-center shadow-md"
+            >
+              <p className="text-lg text-gray-600">
+                Chargement de vos votes...
+              </p>
+            </motion.div>
+          ) : votedProposals.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

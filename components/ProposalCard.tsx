@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { Proposal } from "@/lib/data";
-import { submitVote, hasVotedForProposal } from "@/app/actions/vote";
+import { submitVote, hasVotedForProposal, removeVote } from "@/app/actions/vote";
 
 type ProposalCardProps = {
   proposal: Proposal;
@@ -24,9 +24,56 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
     });
   }, [proposal.id]);
 
+  // Handle Escape key to close dialog
+  useEffect(() => {
+    if (!showDialog) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowDialog(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    // Prevent body scroll when dialog is open
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [showDialog]);
+
   const handleVote = () => {
-    // Don't allow voting if already voted or pending
-    if (voted || isPending) {
+    // Don't allow if pending
+    if (isPending) {
+      return;
+    }
+
+    // If already voted, remove the vote
+    if (voted) {
+      const previousVoted = voted;
+      setVoted(false);
+
+      // Remove vote from server asynchronously
+      startTransition(async () => {
+        const result = await removeVote(proposal.id);
+
+        if (!result.success) {
+          // Revert optimistic UI if error
+          setVoted(previousVoted);
+
+          // Show error message
+          if (result.message) {
+            alert(result.message);
+          }
+        } else {
+          // Callback to parent
+          if (onVote) {
+            onVote(proposal.id);
+          }
+        }
+      });
       return;
     }
 
@@ -97,13 +144,14 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
                   ? "bg-green-500 text-white hover:bg-green-600"
                   : "bg-primary-600 text-white hover:bg-primary-700"
               } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+              title={voted ? "Cliquer pour retirer votre vote" : "Cliquer pour soutenir cette proposition"}
             >
               {isPending ? (
                 "En cours..."
               ) : voted ? (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
-                  Soutenu
+                  Soutenue
                 </>
               ) : (
                 "Je soutiens"
@@ -128,8 +176,16 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
       {/* Dialog for "Read More" */}
       {showDialog && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4"
           onClick={() => setShowDialog(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              setShowDialog(false);
+            }
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dialog-title"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -137,7 +193,7 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 id="dialog-title" className="text-2xl font-bold text-gray-900 mb-4">
               {proposal.title}
             </h2>
             <div className="text-gray-700 whitespace-pre-line mb-6">
@@ -150,20 +206,23 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
               >
                 Fermer
               </button>
-              {!voted && (
-                <button
-                  onClick={() => {
+              <button
+                onClick={() => {
+                  setShowDialog(false);
+                  // Small delay to ensure dialog closes before vote
+                  setTimeout(() => {
                     handleVote();
-                    setShowDialog(false);
-                  }}
-                  disabled={isPending}
-                  className={`flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors ${
-                    isPending ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isPending ? "En cours..." : "Je soutiens"}
-                </button>
-              )}
+                  }, 100);
+                }}
+                disabled={isPending}
+                className={`flex-1 px-4 py-2 rounded-md transition-colors ${
+                  voted
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-primary-600 text-white hover:bg-primary-700"
+                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {isPending ? "En cours..." : voted ? "Retirer mon soutien" : "Je soutiens"}
+              </button>
             </div>
           </motion.div>
         </div>
