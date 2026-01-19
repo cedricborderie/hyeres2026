@@ -71,14 +71,16 @@ export async function hasVotedForProposal(proposalId: string): Promise<boolean> 
       .select("id")
       .eq("proposal_id", proposalId)
       .eq("session_id", sessionId)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to avoid error when no result
 
     // If error or no data, user hasn't voted
-    if (error || !data) {
+    if (error) {
+      console.error("Error checking vote status:", error);
       return false;
     }
 
-    return true;
+    // Return true only if data exists
+    return !!data;
   } catch (error) {
     console.error("Error checking vote status:", error);
     return false;
@@ -264,13 +266,35 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
+    // First, verify the vote exists before trying to delete
+    const { data: existingVote } = await supabase
+      .from("votes")
+      .select("id")
+      .eq("proposal_id", proposalId)
+      .eq("session_id", sessionId)
+      .maybeSingle();
+
+    if (!existingVote) {
+      // Vote doesn't exist, so deletion is effectively successful
+      console.log("Vote doesn't exist, already deleted:", { proposalId, sessionId });
+      const { count } = await supabase
+        .from("votes")
+        .select("*", { count: "exact", head: true })
+        .eq("proposal_id", proposalId);
+      
+      return {
+        success: true,
+        voteCount: count || 0,
+      };
+    }
+
     // Delete vote from Supabase
-    const { error, count: deleteCount } = await supabase
+    const { data: deletedData, error } = await supabase
       .from("votes")
       .delete()
       .eq("proposal_id", proposalId)
       .eq("session_id", sessionId)
-      .select("*", { count: "exact", head: true });
+      .select();
 
     if (error) {
       console.error("Supabase remove vote error:", {
@@ -286,19 +310,19 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // If no row was deleted, check if vote still exists
-    if (deleteCount === 0) {
-      console.warn("No vote found to delete, checking if vote still exists:", { proposalId, sessionId });
+    // Verify deletion was successful
+    if (!deletedData || deletedData.length === 0) {
+      console.warn("No vote was deleted:", { proposalId, sessionId, deletedData });
       
       // Check if vote still exists
-      const { data: existingVote } = await supabase
+      const { data: stillExists } = await supabase
         .from("votes")
         .select("id")
         .eq("proposal_id", proposalId)
         .eq("session_id", sessionId)
-        .single();
+        .maybeSingle();
       
-      if (existingVote) {
+      if (stillExists) {
         // Vote still exists but wasn't deleted - this is an error
         console.error("Vote still exists after delete attempt:", { proposalId, sessionId });
         return {
@@ -307,7 +331,7 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
         };
       }
       
-      // Vote doesn't exist, so deletion is effectively successful
+      // Vote doesn't exist anymore, so deletion is effectively successful
       const { count } = await supabase
         .from("votes")
         .select("*", { count: "exact", head: true })

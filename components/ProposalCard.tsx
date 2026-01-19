@@ -54,6 +54,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
     // If already voted, remove the vote
     if (voted) {
       const previousVoted = voted;
+      // Optimistic UI: immediately set to false
       setVoted(false);
 
       // Remove vote from server asynchronously
@@ -62,6 +63,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
 
         if (!result.success) {
           // Revert optimistic UI if error
+          console.error("Failed to remove vote:", result.message);
           setVoted(previousVoted);
 
           // Show error message
@@ -69,12 +71,26 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             alert(result.message);
           }
         } else {
-          // Wait a bit for database to update, then re-verify vote status
+          // Vote was successfully removed - force UI to show as not voted
+          setVoted(false);
+          
+          // Wait a bit for database to update, then verify
           await new Promise(resolve => setTimeout(resolve, 300));
           
-          // Re-verify vote status from server to ensure UI is in sync
+          // Double-check: re-verify vote status from server (for debugging)
           const hasVoted = await hasVotedForProposal(proposal.id);
-          setVoted(hasVoted);
+          
+          if (hasVoted) {
+            // This shouldn't happen - log warning
+            console.warn("Vote removal reported success but hasVotedForProposal returned true:", {
+              proposalId: proposal.id,
+            });
+            // Force to false anyway since removal was successful
+            setVoted(false);
+          } else {
+            // Confirmed: vote is removed, ensure UI is false
+            setVoted(false);
+          }
 
           // Callback to parent
           if (onVote) {
