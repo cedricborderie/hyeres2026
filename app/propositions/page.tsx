@@ -71,7 +71,7 @@ export default function PropositionsPage() {
                 </p>
                 <div className="flex justify-start md:justify-end">
                   <a
-                    href="https://drive.google.com/file/d/1lCyKY9cLetzoiJaSDc74OW8t0k8Mwwql/view?usp=drive_link"
+                    href="https://drive.google.com/file/d/1GRhKW3Miyo9QCEc6nZ3-JiuH234rzQM8/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
@@ -107,7 +107,7 @@ export default function PropositionsPage() {
                 </p>
                 <div className="flex justify-start md:justify-end">
                   <a
-                    href="https://drive.google.com/file/d/1KBcKctWJaunqVEbUs5kVVLYKuenVWQZE/view?usp=drive_link"
+                    href="https://drive.google.com/file/d/18bIH680FzzdQPRwgUTw8heaHUjqoHMnv/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
