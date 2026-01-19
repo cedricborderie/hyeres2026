@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
 -- Index for email lookups
 CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter_subscriptions(email);
 
--- Trigger for updated_at
+-- Trigger for updated_at (drop if exists to allow re-running migration)
+DROP TRIGGER IF EXISTS trigger_newsletter_updated_at ON newsletter_subscriptions;
+
 CREATE TRIGGER trigger_newsletter_updated_at
 BEFORE UPDATE ON newsletter_subscriptions
 FOR EACH ROW
