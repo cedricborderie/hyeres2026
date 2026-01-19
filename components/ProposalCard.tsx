@@ -32,7 +32,8 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
   // Check vote status on component mount
   useEffect(() => {
     refreshVoteStatus();
-  }, [refreshVoteStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proposal.id]); // Only depend on proposal.id, not refreshVoteStatus to avoid infinite loop
 
   // Handle Escape key to close dialog
   useEffect(() => {
