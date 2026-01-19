@@ -69,6 +69,13 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             alert(result.message);
           }
         } else {
+          // Wait a bit for database to update, then re-verify vote status
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Re-verify vote status from server to ensure UI is in sync
+          const hasVoted = await hasVotedForProposal(proposal.id);
+          setVoted(hasVoted);
+
           // Callback to parent
           if (onVote) {
             onVote(proposal.id);
@@ -106,6 +113,10 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
         if (result.message) {
           alert(result.message);
         }
+      } else {
+        // Re-verify vote status from server to ensure UI is in sync
+        const hasVoted = await hasVotedForProposal(proposal.id);
+        setVoted(hasVoted);
       }
     });
   };

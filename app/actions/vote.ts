@@ -286,10 +286,28 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // If no row was deleted, the vote didn't exist
+    // If no row was deleted, check if vote still exists
     if (deleteCount === 0) {
-      console.warn("No vote found to delete:", { proposalId, sessionId });
-      // Still return success but with current count
+      console.warn("No vote found to delete, checking if vote still exists:", { proposalId, sessionId });
+      
+      // Check if vote still exists
+      const { data: existingVote } = await supabase
+        .from("votes")
+        .select("id")
+        .eq("proposal_id", proposalId)
+        .eq("session_id", sessionId)
+        .single();
+      
+      if (existingVote) {
+        // Vote still exists but wasn't deleted - this is an error
+        console.error("Vote still exists after delete attempt:", { proposalId, sessionId });
+        return {
+          success: false,
+          message: "Impossible de supprimer le vote. Veuillez réessayer.",
+        };
+      }
+      
+      // Vote doesn't exist, so deletion is effectively successful
       const { count } = await supabase
         .from("votes")
         .select("*", { count: "exact", head: true })
