@@ -80,7 +80,7 @@ export default function Home() {
               Parce que l'avenir de notre territoire se joue dès aujourd'hui.
             </p>
             <p className="text-base font-medium text-gray-700 leading-6 mb-6 text-left">
-              Nous associations citoyennes implantées à Hyères depuis de nombreuses années, fortes de nos adhérents et de l'engagement que suscitent nos actions, avons décidé de nous unir pour proposer une vision d'avenir à notre commune.
+              Nous, associations citoyennes implantées à Hyères depuis de nombreuses années, fortes de nos adhérents et de l'engagement que suscitent nos actions, avons décidé de nous unir pour proposer une vision d'avenir à notre commune.
             </p>
             <p className="text-base text-gray-700 leading-6 font-medium text-left">
               À l'approche des prochaines élections municipales, nous avons choisi de mettre nos expertises au service du débat public à travers une plateforme de recommandations concrètes.
@@ -100,7 +100,7 @@ export default function Home() {
               <ul className="space-y-4 text-base text-gray-700">
                 <li className="flex items-start">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span className="font-medium"><strong>Proposer</strong> des solutions concrètes autour de trois piliers majeurs : un urbanisme inclusif, respectueux du patrimoine naturel et bâti, des mobilités douces et une agriculture locale nourricière pour tous.</span>
+                  <span className="font-medium"><strong>Proposer</strong> des solutions concrètes autour de trois piliers majeurs : un urbanisme concerté, respectueux du patrimoine naturel et bâti, des mobilités douces et une agriculture locale nourricière pour tous.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
@@ -112,7 +112,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span><strong>Responsabiliser</strong> les futurs élus en suivant la tenue de leurs promesses tout au long du mandat.</span>
+                  <span><strong>Responsabiliser</strong> les futurs élus en suivant le respect de leurs promesses tout au long du mandat.</span>
                 </li>
               </ul>
             </section>
