@@ -266,82 +266,69 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // First, verify the vote exists before trying to delete
-    const { data: existingVote } = await supabase
+    // Delete vote from Supabase
+    const { error: deleteError } = await supabase
+      .from("votes")
+      .delete()
+      .eq("proposal_id", proposalId)
+      .eq("session_id", sessionId);
+
+    if (deleteError) {
+      console.error("Supabase remove vote error:", {
+        error: deleteError,
+        errorCode: deleteError.code,
+        errorMessage: deleteError.message,
+        errorDetails: deleteError.details,
+        errorHint: deleteError.hint,
+        proposalId,
+        sessionId,
+      });
+      
+      // Check if it's a permission error (RLS)
+      if (deleteError.code === "42501" || deleteError.message?.includes("permission") || deleteError.message?.includes("policy") || deleteError.message?.includes("row-level security")) {
+        return {
+          success: false,
+          message: "Erreur de permissions. Les politiques de sécurité (RLS) bloquent la suppression. Exécutez la migration 009_enable_vote_deletion_rls.sql dans Supabase.",
+        };
+      }
+      
+      return {
+        success: false,
+        message: `Erreur lors de la suppression du vote: ${deleteError.message || "Veuillez réessayer."}`,
+      };
+    }
+
+    // Wait a moment for the deletion to complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Verify deletion was successful by checking if vote still exists
+    const { data: stillExists, error: checkError } = await supabase
       .from("votes")
       .select("id")
       .eq("proposal_id", proposalId)
       .eq("session_id", sessionId)
       .maybeSingle();
-
-    if (!existingVote) {
-      // Vote doesn't exist, so deletion is effectively successful
-      console.log("Vote doesn't exist, already deleted:", { proposalId, sessionId });
-      const { count } = await supabase
-        .from("votes")
-        .select("*", { count: "exact", head: true })
-        .eq("proposal_id", proposalId);
-      
-      return {
-        success: true,
-        voteCount: count || 0,
-      };
+    
+    if (checkError) {
+      console.error("Error checking if vote still exists:", checkError);
+      // If we can't check, assume deletion was successful (optimistic)
     }
-
-    // Delete vote from Supabase
-    const { data: deletedData, error } = await supabase
-      .from("votes")
-      .delete()
-      .eq("proposal_id", proposalId)
-      .eq("session_id", sessionId)
-      .select();
-
-    if (error) {
-      console.error("Supabase remove vote error:", {
-        error,
-        errorCode: error.code,
-        errorMessage: error.message,
-        proposalId,
+    
+    if (stillExists) {
+      // Vote still exists - deletion failed silently
+      console.error("Vote still exists after delete attempt:", { 
+        proposalId, 
         sessionId,
+        stillExists,
       });
       return {
         success: false,
-        message: `Erreur lors de la suppression du vote: ${error.message || "Veuillez réessayer."}`,
+        message: "Impossible de supprimer le vote. Le vote existe toujours dans la base de données. Vérifiez les politiques RLS.",
       };
     }
-
-    // Verify deletion was successful
-    if (!deletedData || deletedData.length === 0) {
-      console.warn("No vote was deleted:", { proposalId, sessionId, deletedData });
-      
-      // Check if vote still exists
-      const { data: stillExists } = await supabase
-        .from("votes")
-        .select("id")
-        .eq("proposal_id", proposalId)
-        .eq("session_id", sessionId)
-        .maybeSingle();
-      
-      if (stillExists) {
-        // Vote still exists but wasn't deleted - this is an error
-        console.error("Vote still exists after delete attempt:", { proposalId, sessionId });
-        return {
-          success: false,
-          message: "Impossible de supprimer le vote. Veuillez réessayer.",
-        };
-      }
-      
-      // Vote doesn't exist anymore, so deletion is effectively successful
-      const { count } = await supabase
-        .from("votes")
-        .select("*", { count: "exact", head: true })
-        .eq("proposal_id", proposalId);
-      
-      return {
-        success: true,
-        voteCount: count || 0,
-      };
-    }
+    
+    // Vote doesn't exist - deletion was successful
+    console.log("Vote successfully removed:", { proposalId, sessionId });
 
     // Success: revalidate paths to update vote counts
     revalidatePath("/");
