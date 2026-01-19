@@ -33,11 +33,11 @@ function PartageContent() {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Un citoyen a partagé ses priorités pour Hyères
+            Voici mes priorités pour l'avenir d'Hyères
           </h1>
           {sharedProposals.length > 0 && (
-            <p className="text-lg text-gray-600">
-              {sharedProposals.length} proposition{sharedProposals.length > 1 ? "s" : ""} sélectionnée{sharedProposals.length > 1 ? "s" : ""}
+            <p className="text-lg text-gray-600 mb-4">
+              Découvrez les propositions de la plate-forme citoyenne que je soutiens et faites entendre votre voix à votre tour !
             </p>
           )}
         </motion.div>

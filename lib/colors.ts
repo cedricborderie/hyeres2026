@@ -13,7 +13,7 @@ export const brandColors = {
     50: "#e6fffd",
     100: "#ccfff9",
     200: "#99fff3",
-    300: "#66ffed",
+    300: "#77CAC5",
     400: "#33ffe7",
     500: "#00A19A", // Couleur principale turquoise
     600: "#008179",

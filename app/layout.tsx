@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Questrial } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const questrial = Questrial({ 
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-questrial',
+});
 
 export const metadata: Metadata = {
   title: "Plateforme Citoyenne Hyèroise",
@@ -23,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="overflow-x-hidden">
-      <body className="flex flex-col min-h-screen overflow-x-hidden max-w-full">
+      <body className={`${questrial.className} flex flex-col min-h-screen overflow-x-hidden max-w-full`}>
         <Header />
         <main className="flex-1">
           {children}

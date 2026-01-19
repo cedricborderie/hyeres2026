@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
-import { Mail, Facebook, MessageCircle, CheckCircle2, Linkedin } from "lucide-react";
+import { Mail, Facebook, MessageCircle, CheckCircle2, Linkedin, Newspaper, Megaphone } from "lucide-react";
 import { subscribeToNewsletter } from "@/app/actions/newsletter";
 
 export default function Footer() {
@@ -44,7 +44,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-12">
         {/* Logos Section - Full Width */}
         <div className="mb-12">
-          <p className="text-base font-medium text-gray-700 text-center mb-8">
+          <p className="font-medium text-gray-700 text-center mb-8" style={{ fontSize: '21px' }}>
             À l'initiative d'associations Hyèroises indépendantes
           </p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 items-center justify-items-center">
@@ -121,7 +121,7 @@ export default function Footer() {
           {/* Newsletter Column */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5" />
+              <Newspaper className="w-5 h-5" />
               Newsletter
             </h3>
             <p className="text-gray-600 text-sm mb-4">
@@ -168,15 +168,33 @@ export default function Footer() {
                 </div>
               )}
             </form>
+            
+            {/* Contactez-nous Section */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                Contactez-nous
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Une idée, une remarque, écrivez-nous à{" "}
+                <a 
+                  href="mailto:contact@hyeres2026.org" 
+                  className="underline hover:text-primary-600"
+                >
+                  contact@hyeres2026.org
+                </a>
+              </p>
+            </div>
           </div>
 
           {/* Share Column */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Aidez-nous à faire connaître la plateforme
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Megaphone className="w-5 h-5" />
+              Partage
             </h3>
             <p className="text-gray-600 text-sm mb-4">
-              Partagez la plateforme autour de vous pour amplifier l'impact citoyen
+              Aidez-nous à faire connaître la plate-forme
             </p>
             <div className="flex flex-col gap-3">
               <a

@@ -25,7 +25,7 @@ export default function PropositionsPage() {
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 md:py-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center">
-          Les Propositions
+          Propositions
         </h1>
 
         {/* Tabs - En haut */}
@@ -34,7 +34,7 @@ export default function PropositionsPage() {
             <button
               key={category.id}
               onClick={() => setActiveTab(category.id)}
-              className={`relative px-6 py-4 font-medium transition-all duration-200 ${
+              className={`relative px-6 py-4 text-lg font-medium transition-all duration-200 ${
                 activeTab === category.id
                   ? "text-primary-600"
                   : "text-gray-500 hover:text-gray-700"
@@ -174,7 +174,7 @@ export default function PropositionsPage() {
                 setActiveTab(category.id);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`relative px-6 py-4 font-medium transition-all duration-200 ${
+              className={`relative px-6 py-4 text-lg font-medium transition-all duration-200 ${
                 activeTab === category.id
                   ? "text-primary-600"
                   : "text-gray-500 hover:text-gray-700"

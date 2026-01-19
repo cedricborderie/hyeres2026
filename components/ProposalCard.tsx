@@ -133,7 +133,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             {!readOnly && (
               <button
                 onClick={() => setShowDialog(true)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-300 rounded-md hover:bg-primary-50 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 transition-colors"
               >
                 En savoir plus
               </button>

@@ -76,7 +76,7 @@ export default function ResultatsPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-lg border-2 border-primary-200 p-6 shadow-md text-center"
+                className="bg-white rounded-lg p-6 shadow-md text-center"
               >
                 <Users className="w-10 h-10 text-primary-600 mx-auto mb-3" />
                 <div className="text-3xl font-bold text-gray-900 mb-2">
@@ -91,7 +91,7 @@ export default function ResultatsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white rounded-lg border-2 border-primary-200 p-6 shadow-md text-center"
+                className="bg-white rounded-lg p-6 shadow-md text-center"
               >
                 <Vote className="w-10 h-10 text-primary-600 mx-auto mb-3" />
                 <div className="text-3xl font-bold text-gray-900 mb-2">
@@ -106,7 +106,7 @@ export default function ResultatsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-lg border-2 border-primary-200 p-6 shadow-md text-center"
+                className="bg-white rounded-lg p-6 shadow-md text-center"
               >
                 <FileStack className="w-10 h-10 text-primary-600 mx-auto mb-3" />
                 <div className="text-3xl font-bold text-gray-900 mb-2">
