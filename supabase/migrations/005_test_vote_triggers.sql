@@ -37,9 +37,9 @@ WHERE id = 'h1';
 -- TEST 3: Test d'incrémentation
 -- ============================================
 -- Insérer un vote de test
--- ⚠️ Utiliser un session_id unique pour le test
+-- ⚠️ Utiliser un session_id unique pour le test (UUID)
 INSERT INTO votes (proposal_id, session_id) 
-VALUES ('h1', 'test-session-' || gen_random_uuid()::text)
+VALUES ('h1', gen_random_uuid())
 ON CONFLICT DO NOTHING;
 
 -- Vérifier que vote_count a été incrémenté automatiquement
@@ -56,11 +56,16 @@ WHERE id = 'h1';
 -- ============================================
 -- TEST 4: Test de décrémentation
 -- ============================================
--- Supprimer le vote de test
+-- Supprimer le vote de test (un seul)
+-- Note: PostgreSQL ne supporte pas LIMIT dans DELETE, on utilise une sous-requête
+-- Supprimer le dernier vote de test inséré pour h1
 DELETE FROM votes 
-WHERE proposal_id = 'h1' 
-  AND session_id LIKE 'test-session-%'
-LIMIT 1;
+WHERE id = (
+  SELECT id FROM votes 
+  WHERE proposal_id = 'h1'
+  ORDER BY created_at DESC
+  LIMIT 1
+);
 
 -- Vérifier que vote_count a été décrémenté automatiquement
 SELECT 

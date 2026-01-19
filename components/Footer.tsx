@@ -1,14 +1,22 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Image from "next/image";
-import { Mail, Facebook, MessageCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Facebook, MessageCircle, CheckCircle2, Linkedin } from "lucide-react";
 import { subscribeToNewsletter } from "@/app/actions/newsletter";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [shareUrl, setShareUrl] = useState("https://hyeres2026.org");
+
+  useEffect(() => {
+    // Use window.location.origin in browser, fallback to production URL
+    if (typeof window !== "undefined") {
+      setShareUrl(window.location.origin);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +33,11 @@ export default function Footer() {
     });
   };
 
-  const shareMessage = `Découvrez la Plateforme Citoyenne Hyèroise et votez pour les propositions qui vous concernent ! 🗳️\n\nhttps://plateforme-citoyenne-hyeroise.fr`;
-  const shareUrl = "https://plateforme-citoyenne-hyeroise.fr";
+  const shareMessage = `Découvrez la Plateforme Citoyenne Hyèroise et votez pour les propositions qui vous concernent ! 🗳️\n\n${shareUrl}`;
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+  const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
   return (
     <footer className="bg-white border-t border-gray-200 mt-auto">
@@ -164,9 +172,11 @@ export default function Footer() {
 
           {/* Share Column */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Partagez la plateforme</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Aidez-nous à faire connaître la plateforme
+            </h3>
             <p className="text-gray-600 text-sm mb-4">
-              Aidez à faire connaître la plateforme autour de vous
+              Partagez la plateforme autour de vous pour amplifier l'impact citoyen
             </p>
             <div className="flex flex-col gap-3">
               <a
@@ -186,6 +196,15 @@ export default function Footer() {
               >
                 <Facebook className="w-5 h-5" />
                 Partager sur Facebook
+              </a>
+              <a
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+              >
+                <Linkedin className="w-5 h-5" />
+                Partager sur LinkedIn
               </a>
             </div>
           </div>

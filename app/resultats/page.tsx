@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Users, Vote, TrendingUp } from "lucide-react";
+import { BarChart3, Users, Vote, FileStack } from "lucide-react";
 import { getAllProposals, categories, getCategoryById } from "@/lib/data";
 import { getAllVoteResults, ProposalVoteCount } from "@/app/actions/results";
 
@@ -108,7 +108,7 @@ export default function ResultatsPage() {
                 transition={{ delay: 0.2 }}
                 className="bg-white rounded-lg border-2 border-primary-200 p-6 shadow-md text-center"
               >
-                <TrendingUp className="w-10 h-10 text-primary-600 mx-auto mb-3" />
+                <FileStack className="w-10 h-10 text-primary-600 mx-auto mb-3" />
                 <div className="text-3xl font-bold text-gray-900 mb-2">
                   {allProposals.length}
                 </div>

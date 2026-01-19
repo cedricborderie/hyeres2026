@@ -12,6 +12,7 @@ export default function BilanPage() {
     new Set()
   );
   const [loading, setLoading] = useState(true);
+  const [shareUrl, setShareUrl] = useState("");
 
   useEffect(() => {
     const fetchVotedProposals = async () => {
@@ -29,22 +30,31 @@ export default function BilanPage() {
     fetchVotedProposals();
   }, []);
 
+  useEffect(() => {
+    // Build the smart share URL with voted proposal IDs
+    if (typeof window !== "undefined" && votedProposalIds.size > 0) {
+      const origin = window.location.origin;
+      const ids = Array.from(votedProposalIds).join(",");
+      setShareUrl(`${origin}/partage?ids=${ids}`);
+    }
+  }, [votedProposalIds]);
+
   const allProposals = getAllProposals();
   const votedProposals = allProposals.filter((p) =>
     votedProposalIds.has(p.id)
   );
 
-  const shareMessage = `J'ai voté pour ${votedProposals.length} proposition${
-    votedProposals.length > 1 ? "s" : ""
-  } sur la plateforme Plateforme Citoyenne Hyèroise ! 🗳️\n\nRejoignez-moi pour faire entendre votre voix : https://plateforme-citoyenne-hyeroise.fr`;
+  // Build WhatsApp message with proposal titles
+  const proposalTitles = votedProposals.map((p) => p.title).join(", ");
+  const shareMessage = `Je viens de sélectionner mes priorités pour Hyères : ${proposalTitles}\n\nDécouvre ma liste complète ici : ${shareUrl || "https://hyeres2026.org"}`;
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-    shareMessage
-  )}`;
+  const whatsappUrl = shareUrl
+    ? `https://wa.me/?text=${encodeURIComponent(shareMessage)}`
+    : "";
 
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    "https://plateforme-citoyenne-hyeroise.fr"
-  )}`;
+  const facebookUrl = shareUrl
+    ? `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+    : "";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-green-50">
@@ -132,33 +142,36 @@ export default function BilanPage() {
               >
                 <Share2 className="w-12 h-12 text-primary-600 mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Partagez votre engagement
+                  Faites entendre votre voix !
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Aidez à faire connaître la plateforme autour de vous pour
-                  amplifier l'impact citoyen.
+                  Partagez vos priorités autour de vous pour amplifier l'impact citoyen.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    Partager sur WhatsApp
-                  </a>
+                  {whatsappUrl && (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                      Partager sur WhatsApp
+                    </a>
+                  )}
 
-                  <a
-                    href={facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  >
-                    <Facebook className="w-5 h-5" />
-                    Partager sur Facebook
-                  </a>
+                  {facebookUrl && (
+                    <a
+                      href={facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      <Facebook className="w-5 h-5" />
+                      Partager sur Facebook
+                    </a>
+                  )}
                 </div>
               </motion.div>
             </>

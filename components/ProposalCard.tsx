@@ -10,9 +10,10 @@ import { submitVote, hasVotedForProposal, removeVote } from "@/app/actions/vote"
 type ProposalCardProps = {
   proposal: Proposal;
   onVote?: (proposalId: string) => void;
+  readOnly?: boolean;
 };
 
-export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
+export default function ProposalCard({ proposal, onVote, readOnly = false }: ProposalCardProps) {
   const [voted, setVoted] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -129,34 +130,43 @@ export default function ProposalCard({ proposal, onVote }: ProposalCardProps) {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 mt-4">
-            <button
-              onClick={() => setShowDialog(true)}
-              className="flex-1 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-300 rounded-md hover:bg-primary-50 transition-colors"
-            >
-              En savoir plus
-            </button>
+            {!readOnly && (
+              <button
+                onClick={() => setShowDialog(true)}
+                className="flex-1 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-300 rounded-md hover:bg-primary-50 transition-colors"
+              >
+                En savoir plus
+              </button>
+            )}
 
-            <button
-              onClick={handleVote}
-              disabled={isPending}
-              className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-colors flex items-center justify-center gap-2 ${
-                voted
-                  ? "bg-green-500 text-white hover:bg-green-600"
-                  : "bg-primary-600 text-white hover:bg-primary-700"
-              } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
-              title={voted ? "Cliquer pour retirer votre vote" : "Cliquer pour soutenir cette proposition"}
-            >
-              {isPending ? (
-                "En cours..."
-              ) : voted ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  Soutenue
-                </>
-              ) : (
-                "Je soutiens"
-              )}
-            </button>
+            {readOnly ? (
+              <div className="flex-1 px-4 py-2 text-sm font-semibold rounded-md bg-green-500 text-white flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-4 h-4" />
+                Proposition soutenue
+              </div>
+            ) : (
+              <button
+                onClick={handleVote}
+                disabled={isPending}
+                className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-colors flex items-center justify-center gap-2 ${
+                  voted
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-primary-600 text-white hover:bg-primary-700"
+                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                title={voted ? "Cliquer pour retirer votre vote" : "Cliquer pour soutenir cette proposition"}
+              >
+                {isPending ? (
+                  "En cours..."
+                ) : voted ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    Soutenue
+                  </>
+                ) : (
+                  "Je soutiens"
+                )}
+              </button>
+            )}
           </div>
 
           {proposal.external_link && (

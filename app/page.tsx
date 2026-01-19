@@ -12,11 +12,26 @@ export default function Home() {
       <div className="container mx-auto px-4 py-12 md:py-20">
         {/* Hero Section */}
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-12">
-          {/* Left: Flag */}
+          {/* Left: Text */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            className="text-left"
+          >
+            <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
+              La Plateforme Citoyenne : Reprenons la parole pour les municipales !
+            </h1>
+            <p className="text-base font-medium text-gray-700 leading-[25px] mb-6">
+              Nos associations s'unissent pour proposer une plateforme citoyenne non partisane. Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois priorités : urbanisme durable, mobilités douces et agriculture locale. Engageons ensemble les futurs élus pour un territoire harmonieux.
+            </p>
+          </motion.div>
+
+          {/* Right: Flag */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="flex justify-center md:justify-start"
           >
             <div className="relative w-full max-w-sm">
@@ -29,21 +44,6 @@ export default function Home() {
                 priority
               />
             </div>
-          </motion.div>
-
-          {/* Right: Text */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-left"
-          >
-            <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
-              La Plateforme Citoyenne : Reprenons la parole pour les municipales !
-            </h1>
-            <p className="text-base font-medium text-gray-700 leading-[25px] mb-6">
-              Nos associations s'unissent pour proposer une plateforme citoyenne non partisane. Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois priorités : urbanisme durable, mobilités douces et agriculture locale. Engageons ensemble les futurs élus pour un territoire harmonieux.
-            </p>
           </motion.div>
         </div>
 
@@ -73,10 +73,10 @@ export default function Home() {
             <p className="text-base font-medium text-gray-700 leading-relaxed mb-8 text-left">
               Parce que l'avenir de notre territoire se joue dès aujourd'hui.
             </p>
-            <p className="text-base font-medium text-gray-700 leading-6 mb-6">
+            <p className="text-base font-medium text-gray-700 leading-6 mb-6 text-left">
               Nous associations citoyennes implantées à Hyères depuis de nombreuses années, fortes de nos adhérents et de l'engagement que suscitent nos actions, avons décidé de nous unir pour proposer une vision d'avenir à notre commune.
             </p>
-            <p className="text-base text-gray-700 leading-6 font-medium">
+            <p className="text-base text-gray-700 leading-6 font-medium text-left">
               À l'approche des prochaines élections municipales, nous avons choisi de mettre nos expertises au service du débat public à travers une plateforme de recommandations concrètes.
             </p>
           </section>

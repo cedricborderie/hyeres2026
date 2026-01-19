@@ -56,11 +56,38 @@ ALTER TABLE votes
   REFERENCES proposals(id) 
   ON DELETE CASCADE;
 
--- Step 7: Recreate triggers (ensure they don't exist first with explicit DROP)
+-- Step 7: Recreate functions and triggers (ensure they don't exist first with explicit DROP)
 -- Double-check and drop any remaining triggers
 DROP TRIGGER IF EXISTS trigger_update_vote_count_after_insert ON public.votes CASCADE;
 DROP TRIGGER IF EXISTS trigger_update_vote_count_after_delete ON public.votes CASCADE;
 DROP TRIGGER IF EXISTS trigger_proposals_updated_at ON public.proposals CASCADE;
+
+-- Recreate functions (they might have been dropped when proposals table was dropped)
+CREATE OR REPLACE FUNCTION update_proposal_vote_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE proposals
+  SET vote_count = (
+    SELECT COUNT(*) FROM votes WHERE proposal_id = NEW.proposal_id
+  ),
+  updated_at = NOW()
+  WHERE id = NEW.proposal_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_proposal_vote_count_on_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE proposals
+  SET vote_count = (
+    SELECT COUNT(*) FROM votes WHERE proposal_id = OLD.proposal_id
+  ),
+  updated_at = NOW()
+  WHERE id = OLD.proposal_id;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Now create the triggers
 CREATE TRIGGER trigger_update_vote_count_after_insert
