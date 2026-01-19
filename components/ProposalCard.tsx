@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useCallback } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { CheckCircle2, ExternalLink } from "lucide-react";
@@ -18,12 +18,21 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
   const [showDialog, setShowDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  // Function to refresh vote status from server
+  const refreshVoteStatus = useCallback(async () => {
+    try {
+      const hasVoted = await hasVotedForProposal(proposal.id);
+      setVoted(hasVoted);
+    } catch (error) {
+      console.error("Error refreshing vote status:", error);
+      // On error, don't change the state
+    }
+  }, [proposal.id]);
+
   // Check vote status on component mount
   useEffect(() => {
-    hasVotedForProposal(proposal.id).then((hasVoted) => {
-      setVoted(hasVoted);
-    });
-  }, [proposal.id]);
+    refreshVoteStatus();
+  }, [refreshVoteStatus]);
 
   // Handle Escape key to close dialog
   useEffect(() => {
@@ -71,26 +80,12 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             alert(result.message);
           }
         } else {
-          // Vote was successfully removed - force UI to show as not voted
-          setVoted(false);
+          // Vote was successfully removed - refresh status from server
+          // Wait a bit for database to update
+          await new Promise(resolve => setTimeout(resolve, 500));
           
-          // Wait a bit for database to update, then verify
-          await new Promise(resolve => setTimeout(resolve, 300));
-          
-          // Double-check: re-verify vote status from server (for debugging)
-          const hasVoted = await hasVotedForProposal(proposal.id);
-          
-          if (hasVoted) {
-            // This shouldn't happen - log warning
-            console.warn("Vote removal reported success but hasVotedForProposal returned true:", {
-              proposalId: proposal.id,
-            });
-            // Force to false anyway since removal was successful
-            setVoted(false);
-          } else {
-            // Confirmed: vote is removed, ensure UI is false
-            setVoted(false);
-          }
+          // Refresh vote status from server to ensure UI is in sync
+          await refreshVoteStatus();
 
           // Callback to parent
           if (onVote) {
@@ -131,8 +126,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
         }
       } else {
         // Re-verify vote status from server to ensure UI is in sync
-        const hasVoted = await hasVotedForProposal(proposal.id);
-        setVoted(hasVoted);
+        await refreshVoteStatus();
       }
     });
   };
