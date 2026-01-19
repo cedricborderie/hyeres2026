@@ -2,40 +2,29 @@
 -- Created: 2024
 -- Description: Ensures RLS policies allow users to delete their own votes
 
--- Check if RLS is enabled on votes table
-DO $$
-BEGIN
-  -- Enable RLS if not already enabled
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE schemaname = 'public' 
-    AND tablename = 'votes'
-  ) THEN
-    -- RLS might not be enabled, but we'll create policies anyway
-    -- They will only work if RLS is enabled
-    RAISE NOTICE 'RLS policies will be created. Ensure RLS is enabled on votes table.';
-  END IF;
-END $$;
+-- Step 1: Enable RLS on votes table if not already enabled
+ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
 
--- Drop existing policies if they exist
+-- Step 2: Drop existing policies if they exist (to allow re-running)
 DROP POLICY IF EXISTS "Allow public deletes on votes" ON votes;
 DROP POLICY IF EXISTS "Allow public inserts on votes" ON votes;
 DROP POLICY IF EXISTS "Allow public selects on votes" ON votes;
 
--- Policy to allow anyone to insert votes (anonymous voting)
+-- Step 3: Policy to allow anyone to insert votes (anonymous voting)
 CREATE POLICY "Allow public inserts on votes"
 ON votes FOR INSERT
 TO anon, authenticated
 WITH CHECK (true);
 
--- Policy to allow anyone to select votes (for counting)
+-- Step 4: Policy to allow anyone to select votes (for counting and verification)
 CREATE POLICY "Allow public selects on votes"
 ON votes FOR SELECT
 TO anon, authenticated
 USING (true);
 
--- Policy to allow users to delete their own votes (by session_id)
+-- Step 5: Policy to allow users to delete votes
 -- This is the critical policy for vote deletion
+-- We allow deletion for all anonymous users since we use session_id for identification
 CREATE POLICY "Allow public deletes on votes"
 ON votes FOR DELETE
 TO anon, authenticated
