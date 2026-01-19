@@ -9,9 +9,10 @@ import LiveStats from "@/components/LiveStats";
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-primary-50">
-      <div className="container mx-auto px-4 py-12 md:py-20">
-        {/* Hero Section */}
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center mb-12">
+      {/* Hero Section - Full Width Background */}
+      <div className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset', boxShadow: '0px 4px 12px 0px rgba(0, 0, 0, 0.15)' }}>
+        <div className="container mx-auto px-4" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset' }}>
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Left: Text */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -20,11 +21,27 @@ export default function Home() {
             className="text-left"
           >
             <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
-              La Plateforme Citoyenne : Reprenons la parole pour les municipales !
+              Reprenons la parole pour les municipales !
             </h1>
             <p className="text-base font-medium text-gray-700 leading-[25px] mb-6">
               Nos associations s'unissent pour proposer une plateforme citoyenne non partisane. Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois priorités : urbanisme durable, mobilités douces et agriculture locale. Engageons ensemble les futurs élus pour un territoire harmonieux.
             </p>
+            
+            <p className="text-lg font-semibold text-primary-600 mb-6">
+              Votre voix compte : donnez votre avis sur nos propositions !
+            </p>
+
+            {/* CTA and Stats */}
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12">
+              <LiveStats />
+              <Link
+                href="/propositions"
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Commencer à voter
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </motion.div>
 
           {/* Right: Flag */}
@@ -45,28 +62,15 @@ export default function Home() {
               />
             </div>
           </motion.div>
+          </div>
         </div>
+      </div>
 
-        <p className="text-lg font-semibold text-primary-600 mb-6 text-center flex flex-col">
-          Votre voix compte : donnez votre avis sur nos propositions !
-        </p>
-
-        {/* CTA and Stats on same line */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12 border-b border-gray-200 pb-12">
-          <LiveStats />
-          <Link
-            href="/propositions"
-            className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
-          >
-            Commencer à voter
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-
-        {/* Main Content Section */}
+      {/* Main Content Section */}
+      <div className="container mx-auto px-4 py-12 md:py-20">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Section 1: Pour un Hyères Désirable - Full Width */}
-          <section className="max-w-4xl mx-auto">
+          <section className="max-w-4xl">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 text-left">
               Pour un Hyères Désirable : La Plateforme Citoyenne
             </h2>
@@ -113,7 +117,7 @@ export default function Home() {
 
             {/* Right Column: Nos 3 Champs d'Expertise */}
             <section>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">
                 Nos 3 Champs d'Expertise
               </h2>
               <div className="space-y-6">
