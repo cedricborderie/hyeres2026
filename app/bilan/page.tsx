@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Share2, Facebook, MessageCircle } from "lucide-react";
+import { CheckCircle2, Megaphone, Facebook, MessageCircle, Linkedin } from "lucide-react";
 import { getAllProposals } from "@/lib/data";
 import { getVotedProposalIds } from "@/app/actions/vote";
 import Link from "next/link";
@@ -54,6 +54,10 @@ export default function BilanPage() {
 
   const facebookUrl = shareUrl
     ? `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+    : "";
+
+  const linkedinUrl = shareUrl
+    ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
     : "";
 
   return (
@@ -138,14 +142,14 @@ export default function BilanPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white rounded-lg border-2 border-primary-200 p-8 text-center shadow-md"
+                className="bg-white rounded-lg border-2 border-primary-500 p-8 text-center shadow-md"
               >
-                <Share2 className="w-12 h-12 text-primary-600 mx-auto mb-4" />
+                <Megaphone className="w-12 h-12 text-primary-600 mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   Faites entendre votre voix !
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Partagez vos priorités autour de vous pour amplifier l'impact citoyen.
+                  Partagez <span className="font-bold underline">vos priorités</span> autour de vous pour amplifier l'impact citoyen.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -170,6 +174,18 @@ export default function BilanPage() {
                     >
                       <Facebook className="w-5 h-5" />
                       Partager sur Facebook
+                    </a>
+                  )}
+
+                  {linkedinUrl && (
+                    <a
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                      Partager sur LinkedIn
                     </a>
                   )}
                 </div>

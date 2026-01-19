@@ -40,8 +40,8 @@ export default function Footer() {
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
   return (
-    <footer className="bg-white border-t border-gray-200 mt-auto">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-white border-t border-gray-200 mt-auto overflow-x-hidden">
+      <div className="container mx-auto px-4 py-12 max-w-full">
         {/* Logos Section - Full Width */}
         <div className="mb-12">
           <p className="font-medium text-gray-700 text-center mb-8" style={{ fontSize: '21px' }}>
@@ -196,12 +196,12 @@ export default function Footer() {
             <p className="text-gray-600 text-sm mb-4">
               Aidez-nous à faire connaître la plate-forme
             </p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 w-full">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors w-full"
               >
                 <MessageCircle className="w-5 h-5" />
                 Partager sur WhatsApp
@@ -210,7 +210,7 @@ export default function Footer() {
                 href={facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors w-full"
               >
                 <Facebook className="w-5 h-5" />
                 Partager sur Facebook
@@ -219,7 +219,7 @@ export default function Footer() {
                 href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors w-full"
               >
                 <Linkedin className="w-5 h-5" />
                 Partager sur LinkedIn

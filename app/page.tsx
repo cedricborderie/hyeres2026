@@ -13,12 +13,31 @@ export default function Home() {
       <div className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset', boxShadow: '0px 4px 12px 0px rgba(0, 0, 0, 0.15)' }}>
         <div className="container mx-auto px-4" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset' }}>
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          {/* Flag - Mobile First (above text), Desktop Second (right column) */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex justify-center md:justify-start order-1 md:order-2"
+          >
+            <div className="relative w-full max-w-[200px] md:max-w-sm">
+              <Image
+                src="/drapeau.svg"
+                alt="Drapeau Plateforme Citoyenne Hyèroise"
+                width={400}
+                height={300}
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          </motion.div>
+
           {/* Left: Text */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-left"
+            className="text-left order-2 md:order-1"
           >
             <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
               Reprenons la parole pour les municipales !
@@ -33,33 +52,16 @@ export default function Home() {
 
             {/* CTA and Stats */}
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12">
-              <LiveStats />
+              <div className="w-full md:w-auto">
+                <LiveStats />
+              </div>
               <Link
                 href="/propositions"
-                className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl w-full md:w-auto justify-center"
               >
                 Commencer à voter
                 <ArrowRight className="w-5 h-5" />
               </Link>
-            </div>
-          </motion.div>
-
-          {/* Right: Flag */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex justify-center md:justify-start"
-          >
-            <div className="relative w-full max-w-sm">
-              <Image
-                src="/drapeau.svg"
-                alt="Drapeau Plateforme Citoyenne Hyèroise"
-                width={400}
-                height={300}
-                className="w-full h-auto"
-                priority
-              />
             </div>
           </motion.div>
           </div>

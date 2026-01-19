@@ -20,7 +20,7 @@ export const categories: Category[] = [
   {
     id: "habitat",
     title: "Habitat & Urbanisme",
-    description: "5 recommandations pour un développement harmonieux et durable.",
+    description: "20 recommandations pour un développement harmonieux et durable.",
     color: "#6B9BD1", // Bleu doux - stabilité, construction (adouci)
   },
   {
@@ -38,41 +38,155 @@ export const categories: Category[] = [
 ];
 
 export const proposals: Proposal[] = [
-  // --- HABITAT (5 Recommandations) ---
+  // --- HABITAT (20 Recommandations) ---
+  // --- AXE 1 : RÉVISER UN PLU TROP PERMISSIF (Points 1 à 4) ---
   {
     id: "h1",
     categoryId: "habitat",
-    title: "1. Réviser un PLU trop permissif",
-    summary: "Diminuer la constructibilité et maîtriser les densités.",
-    details: "Nous proposons de réduire les zones constructibles (Zones U) et d'appliquer la loi Le Meur pour interdire toute construction supplémentaire de résidences secondaires. Il faut rendre obligatoire une notice urbanistique opposable valorisant la mixité et les espaces communs, et redonner une vocation agricole à la zone des Rougières.",
+    title: "1. Diminuer la constructibilité",
+    summary: "Réduire les zones U et stopper les résidences secondaires.",
+    details: "Réduire les zones constructibles (Zones U) et appliquer la loi Le Meur pour interdire toute construction supplémentaire de résidences secondaires.",
   },
   {
     id: "h2",
     categoryId: "habitat",
-    title: "2. Protéger et valoriser le littoral",
-    summary: "Appliquer strictement la loi Littoral et sauvegarder les espaces sensibles.",
-    details: "Le littoral est une réserve de biodiversité et une valeur paysagère forte. Nous demandons l'application stricte de la loi Littoral, la sauvegarde des espaces sensibles (MGEN, Gapeau, La Badine) et le déplacement de l'embarcadère de la Tour Fondue vers le port.",
+    title: "2. Maîtriser les densités",
+    summary: "Stopper l'étalement urbain et l'habitat diffus.",
+    details: "Encadrer strictement les lotissements périphériques. Rendre obligatoire une notice urbanistique opposable valorisant la mixité et les espaces communs.",
   },
   {
     id: "h3",
     categoryId: "habitat",
-    title: "3. Anticiper les risques d'inondation",
-    summary: "Délimiter des zones inconstructibles strictes face à la submersion.",
-    details: "Face aux épisodes pluvieux intenses et au recul du trait de côte, la révision du PPRI est une priorité. Les règles d'urbanisme doivent interdire toute nouvelle construction dans les zones à risque et définir des projets pilotes de relocalisation (logique solidaire et responsable).",
+    title: "3. Préserver les espaces agricoles",
+    summary: "Protéger les Rougières et appliquer la Loi Climat.",
+    details: "Créer des zones agricoles protégées (ZAP), appliquer l'objectif Zéro Artificialisation et redonner une vocation agricole à la zone des Rougières.",
   },
   {
     id: "h4",
     categoryId: "habitat",
-    title: "4. Faire face aux canicules",
-    summary: "Végétalisation massive et rénovation thermique des bâtiments.",
-    details: "Pour réduire les îlots de chaleur, nous proposons une végétalisation massive de l'espace public (50 à 150€/m2) et la rénovation des bâtiments publics inadaptés (isolation, protections solaires, free cooling). Les Plans Climat Air Energie (PCAET) doivent être respectés.",
+    title: "4. Préserver le patrimoine bâti",
+    summary: "Protéger le petit patrimoine avec les habitants.",
+    details: "Inventorier le patrimoine non classé et travailler avec l'Architecte des Bâtiments de France pour imposer des règles strictes aux promoteurs.",
   },
+
+  // --- AXE 2 : PROTÉGER LE LITTORAL (Points 5 à 7) ---
   {
     id: "h5",
     categoryId: "habitat",
-    title: "5. Favoriser un habitat mixte et accessible",
-    summary: "Mobiliser les logements vacants et créer une Coopérative Foncière.",
-    details: "Il y a 2600 logements vacants à Hyères ! Appliquons la Taxe sur les Logements Vacants (TLV) pour financer leur rénovation via l'ANAH. Nous proposons aussi de passer la taxe sur les résidences secondaires à 20% et de créer un Organisme Foncier Solidaire (OFS) pour des logements durablement abordables (Bail Réel Solidaire).",
+    title: "5. Appliquer la Loi Littoral",
+    summary: "Limiter strictement les extensions en bord de mer.",
+    details: "Zéro dérogation : limiter les nouvelles constructions et les extensions pour préserver la valeur paysagère et la biodiversité.",
+  },
+  {
+    id: "h6",
+    categoryId: "habitat",
+    title: "6. Sauvegarder les espaces sensibles",
+    summary: "Protection absolue (MGEN, Gapeau, La Badine).",
+    details: "Ces sites emblématiques doivent être totalement préservés. Nous tendrons vers des densités plus faibles et des zones inconstructibles.",
+  },
+  {
+    id: "h7",
+    categoryId: "habitat",
+    title: "7. Déplacer l'embarcadère",
+    summary: "Désengorger la Tour Fondue vers le Port.",
+    details: "Déplacer les flux vers le port d'Hyères et envisager à terme la fermeture de la route du Sel à la circulation automobile.",
+  },
+
+  // --- AXE 3 : RISQUES INONDATION (Points 8 à 11) ---
+  {
+    id: "h8",
+    categoryId: "habitat",
+    title: "8. Zéro construction en zone à risque",
+    summary: "Interdiction totale, même en surélevant.",
+    details: "Délimiter des zones rouges strictes où toute nouvelle construction est interdite face à l'aggravation des risques d'inondation.",
+  },
+  {
+    id: "h9",
+    categoryId: "habitat",
+    title: "9. Révision du PPRI",
+    summary: "Une priorité absolue du mandat.",
+    details: "Mettre à jour le Plan de Prévention des Risques d'Inondation pour tenir compte de l'imperméabilisation des sols.",
+  },
+  {
+    id: "h10",
+    categoryId: "habitat",
+    title: "10. Anticiper le trait de côte",
+    summary: "Définir des zones d'études prospectives.",
+    details: "Identifier dans le PLU les zones menacées par la montée des eaux pour geler les projets à risque.",
+  },
+  {
+    id: "h11",
+    categoryId: "habitat",
+    title: "11. Projets pilotes de relocalisation",
+    summary: "Une logique de solidarité face aux risques.",
+    details: "Expérimenter des solutions de relocalisation ou d'adaptation pour les habitants menacés par les risques littoraux.",
+  },
+
+  // --- AXE 4 : CANICULES (Points 12 à 13) ---
+  {
+    id: "h12",
+    categoryId: "habitat",
+    title: "12. Réduire les îlots de chaleur",
+    summary: "Végétalisation massive (50-150€/m²).",
+    details: "Remplacer les matériaux inadaptés et créer des îlots de fraîcheur sur l'espace public.",
+  },
+  {
+    id: "h13",
+    categoryId: "habitat",
+    title: "13. Rénover les bâtiments publics",
+    summary: "Isolation et 'Free Cooling'.",
+    details: "Investir (200-500€/m²) pour adapter écoles et mairies aux fortes chaleurs (protections solaires, surventilation).",
+  },
+
+  // --- AXE 5 : HABITAT MIXTE (Points 14 à 20) ---
+  {
+    id: "h14",
+    categoryId: "habitat",
+    title: "14. Taxe Logements Vacants (TLV)",
+    summary: "Mobiliser les 2600 logements vides.",
+    details: "Appliquer la TLV (17% puis 34%) pour inciter à la location et reverser les recettes à l'ANAH.",
+  },
+  {
+    id: "h15",
+    categoryId: "habitat",
+    title: "15. Opération Réhabilitation",
+    summary: "Aider les propriétaires (MaPrimeRénov).",
+    details: "Lancer une campagne massive pour remettre les logements vacants sur le marché (Coût pour la ville : 0€).",
+  },
+  {
+    id: "h16",
+    categoryId: "habitat",
+    title: "16. Réinvestir les amendes SRU",
+    summary: "Acheter dans le centre-ville.",
+    details: "Utiliser les 318 000€ d'amendes annuelles pour préempter et rénover des immeubles anciens.",
+  },
+  {
+    id: "h17",
+    categoryId: "habitat",
+    title: "17. Hausse Taxe Résidences Secondaires",
+    summary: "Passer de 12% à 20% (Zone Tendue).",
+    details: "Générer 1,5M€ de recettes supplémentaires par an pour financer le logement abordable.",
+  },
+  {
+    id: "h18",
+    categoryId: "habitat",
+    title: "18. Coopérative Foncière (BRS)",
+    summary: "Logements abordables à vie.",
+    details: "Créer un Organisme Foncier Solidaire : la ville garde le terrain, l'habitant achète les murs 30% moins cher.",
+  },
+  {
+    id: "h19",
+    categoryId: "habitat",
+    title: "19. Renouvellement Val des Rougières",
+    summary: "Plan ANRU sur 15 ans.",
+    details: "Requalifier totalement le quartier pour améliorer la vie des habitants (Investissement : 24€/habitant/an).",
+  },
+  {
+    id: "h20",
+    categoryId: "habitat",
+    title: "20. Hébergement Saisonniers & Jeunes",
+    summary: "Auberges de jeunesse et Tiers-lieux.",
+    details: "Créer des solutions d'hébergement dignes et hybrides pour les travailleurs et les jeunes.",
   },
 
   // --- MOBILITÉS (15 Propositions) ---
