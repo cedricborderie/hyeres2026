@@ -265,11 +265,12 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
     }
 
     // Delete vote from Supabase
-    const { error } = await supabase
+    const { error, count: deleteCount } = await supabase
       .from("votes")
       .delete()
       .eq("proposal_id", proposalId)
-      .eq("session_id", sessionId);
+      .eq("session_id", sessionId)
+      .select("*", { count: "exact", head: true });
 
     if (error) {
       console.error("Supabase remove vote error:", {
@@ -285,17 +286,57 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
+    // If no row was deleted, the vote didn't exist
+    if (deleteCount === 0) {
+      console.warn("No vote found to delete:", { proposalId, sessionId });
+      // Still return success but with current count
+      const { count } = await supabase
+        .from("votes")
+        .select("*", { count: "exact", head: true })
+        .eq("proposal_id", proposalId);
+      
+      return {
+        success: true,
+        voteCount: count || 0,
+      };
+    }
+
     // Success: revalidate paths to update vote counts
     revalidatePath("/");
     revalidatePath("/propositions");
     revalidatePath("/bilan");
     revalidatePath("/resultats");
 
-    // Get updated vote count
+    // Wait a bit for the trigger to update vote_count, then get updated count
+    // The trigger should update proposals.vote_count automatically
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Get updated vote count from votes table (more reliable than proposals.vote_count)
     const { count } = await supabase
       .from("votes")
       .select("*", { count: "exact", head: true })
       .eq("proposal_id", proposalId);
+
+    // Also verify that proposals.vote_count was updated by the trigger
+    const { data: proposalData } = await supabase
+      .from("proposals")
+      .select("vote_count")
+      .eq("id", proposalId)
+      .single();
+
+    // If trigger didn't work, manually update vote_count
+    if (proposalData && proposalData.vote_count !== count) {
+      console.warn("Trigger didn't update vote_count, manually updating:", {
+        proposalId,
+        storedCount: proposalData.vote_count,
+        actualCount: count,
+      });
+      
+      await supabase
+        .from("proposals")
+        .update({ vote_count: count || 0 })
+        .eq("id", proposalId);
+    }
 
     return {
       success: true,
