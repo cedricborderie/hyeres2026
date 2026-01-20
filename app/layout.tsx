@@ -3,6 +3,7 @@ import { Questrial } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import VoteGatekeeper from "@/components/VoteGatekeeper";
 
 const questrial = Questrial({ 
   subsets: ['latin'],
@@ -31,11 +32,13 @@ export default function RootLayout({
   return (
     <html lang="fr" className="overflow-x-hidden">
       <body className={`${questrial.className} flex flex-col min-h-screen overflow-x-hidden max-w-full`}>
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <VoteGatekeeper>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </VoteGatekeeper>
       </body>
     </html>
   );

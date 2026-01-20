@@ -3,11 +3,14 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/server";
+import { supabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabase/admin";
+import { verifyHumanBadge } from "./security";
 
 export interface VoteResult {
   success: boolean;
   message?: string;
   voteCount?: number;
+  error?: "CAPTCHA_REQUIRED";
 }
 
 /**
@@ -96,9 +99,32 @@ export async function hasVotedForProposal(proposalId: string): Promise<boolean> 
  */
 export async function submitVote(proposalId: string): Promise<VoteResult> {
   try {
+    // DEBUG: Log at the very start
+    console.log("=== VOTE DEBUG START ===");
+    console.log("Environment check:", {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      serviceRoleKeyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY 
+        ? process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 20) + "..." 
+        : "NOT SET",
+    });
+
+    // Step A: Verify human badge cookie (Gatekeeper pattern)
+    const isHuman = await verifyHumanBadge();
+    
+    if (!isHuman) {
+      console.log("=== VOTE DEBUG: Human badge not verified ===");
+      return {
+        success: false,
+        error: "CAPTCHA_REQUIRED",
+        message: "Vérification humaine requise.",
+      };
+    }
+
     // If Supabase is not configured, return error
     if (!isSupabaseConfigured() || !supabase) {
-      console.error("Supabase not configured:", {
+      console.error("=== VOTE DEBUG: Supabase not configured ===", {
         hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
         hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
         supabaseClient: supabase ? "exists" : "null",
@@ -108,6 +134,25 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
         message: "Base de données non configurée. Contactez l'administrateur.",
       };
     }
+
+    // Check if admin client is configured (required for writing votes)
+    if (!isSupabaseAdminConfigured() || !supabaseAdmin) {
+      console.error("=== VOTE DEBUG: Supabase Admin not configured ===", {
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        isAdminConfigured: isSupabaseAdminConfigured(),
+        hasSupabaseAdmin: !!supabaseAdmin,
+      });
+      return {
+        success: false,
+        message: "Configuration serveur incomplète. Contactez l'administrateur.",
+      };
+    }
+
+    console.log("=== VOTE DEBUG: Admin client configured ===", {
+      hasSupabaseAdmin: !!supabaseAdmin,
+      isAdminConfigured: isSupabaseAdminConfigured(),
+    });
 
     // Read session_id from cookies (secure, cannot be manipulated by client)
     const cookieStore = await cookies();
@@ -128,7 +173,7 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // Check if proposal exists in Supabase
+    // Check if proposal exists in Supabase (using anon client for read)
     const { data: proposalData, error: proposalError } = await supabase
       .from("proposals")
       .select("id")
@@ -147,8 +192,21 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // Insert vote into Supabase
-    const { error, data } = await supabase
+    // Insert vote into Supabase using ADMIN client (bypasses RLS)
+    // Log diagnostic information
+    console.log("=== VOTE DEBUG: Insertion attempt ===", {
+      proposalId,
+      sessionId,
+      hasSupabaseAdmin: !!supabaseAdmin,
+      isAdminConfigured: isSupabaseAdminConfigured(),
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? "defined" : "undefined",
+      serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? "defined" : "undefined",
+      serviceRoleKeyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY 
+        ? process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 20) + "..." 
+        : "NOT SET",
+    });
+
+    const { error, data } = await supabaseAdmin!
       .from("votes")
       .insert({
         proposal_id: proposalId,
@@ -156,6 +214,20 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
       })
       .select()
       .single();
+
+    // Log error details for debugging
+    if (error) {
+      console.error("=== VOTE DEBUG: Insertion ERROR ===", {
+        errorCode: error.code,
+        errorMessage: error.message,
+        errorDetails: error.details,
+        errorHint: error.hint,
+        proposalId,
+        sessionId,
+        hasSupabaseAdmin: !!supabaseAdmin,
+        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? "defined" : "undefined",
+      });
+    }
 
     // Handle unique constraint violation (user already voted)
     if (error) {
@@ -211,7 +283,7 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
     revalidatePath("/");
     revalidatePath("/propositions");
 
-    // Get updated vote count
+    // Get updated vote count (using anon client for read)
     const { count } = await supabase
       .from("votes")
       .select("*", { count: "exact", head: true })

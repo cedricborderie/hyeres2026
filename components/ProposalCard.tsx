@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useTransition, useCallback } from "react";
 import { motion } from "framer-motion";
-import confetti from "canvas-confetti";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { Proposal } from "@/lib/data";
-import { submitVote, hasVotedForProposal, removeVote } from "@/app/actions/vote";
+import { hasVotedForProposal, removeVote } from "@/app/actions/vote";
+import { useVoteContext } from "@/components/VoteGatekeeper";
 
 type ProposalCardProps = {
   proposal: Proposal;
@@ -17,6 +17,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
   const [voted, setVoted] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { vote: voteFromContext } = useVoteContext();
 
   // Function to refresh vote status from server
   const refreshVoteStatus = useCallback(async () => {
@@ -97,38 +98,18 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
       return;
     }
 
-    // Optimistic UI: immediately update UI (+1)
-    const previousVoted = voted;
-    setVoted(true);
-
-    // Trigger confetti immediately for better UX
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-
-    // Callback to parent (immediate)
-    if (onVote) {
-      onVote(proposal.id);
-    }
-
-    // Submit vote to server asynchronously
-    startTransition(async () => {
-      const result = await submitVote(proposal.id);
-
-      if (!result.success) {
-        // Revert optimistic UI if error (-1)
-        setVoted(previousVoted);
-
-        // Show error message
-        if (result.message) {
-          alert(result.message);
-        }
-      } else {
-        // Re-verify vote status from server to ensure UI is in sync
-        await refreshVoteStatus();
+    // Use VoteGatekeeper context to handle vote (includes CAPTCHA check)
+    // The context will handle CAPTCHA modal if needed
+    voteFromContext(proposal.id).then(() => {
+      // After vote (or CAPTCHA verification), refresh status
+      refreshVoteStatus();
+      
+      // Callback to parent
+      if (onVote) {
+        onVote(proposal.id);
       }
+    }).catch((error) => {
+      console.error("Error in vote:", error);
     });
   };
 
