@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Questrial } from 'next/font/google';
 import "./globals.css";
 import Header from "@/components/Header";
@@ -30,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="overflow-x-hidden">
+    <html lang="fr" className={`${questrial.variable} overflow-x-hidden`}>
       <body className={`${questrial.className} flex flex-col min-h-screen overflow-x-hidden max-w-full`}>
         <VoteGatekeeper>
           <Header />
@@ -39,6 +40,10 @@ export default function RootLayout({
           </main>
           <Footer />
         </VoteGatekeeper>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { categories, getProposalsByCategory, getCategoryById } from "@/lib/data";
 import ProposalCard from "@/components/ProposalCard";
-import { Mail, ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
+import { getCategoryColorClasses } from "@/lib/utils";
 
 export default function PropositionsPage() {
   const [activeTab, setActiveTab] = useState("habitat");
@@ -30,27 +31,41 @@ export default function PropositionsPage() {
 
         {/* Tabs - En haut */}
         <div className="flex flex-wrap justify-center gap-1 mb-12 border-b border-gray-200">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setActiveTab(category.id)}
-              className={`relative px-6 py-4 text-lg font-medium transition-all duration-200 ${
-                activeTab === category.id
-                  ? "text-primary-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {category.title}
-              {activeTab === category.id && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-            </button>
-          ))}
+          {categories.map((category) => {
+            const categoryColors = getCategoryColorClasses(category.id);
+            const isActive = activeTab === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveTab(category.id)}
+                className="relative px-6 py-4 text-lg font-medium transition-all duration-200"
+                style={{
+                  color: isActive ? categoryColors.text : "rgb(107, 114, 128)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = "rgb(55, 65, 81)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = "rgb(107, 114, 128)";
+                  }
+                }}
+              >
+                {category.title}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5"
+                    style={{ backgroundColor: categoryColors.underline }}
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Information Blocks for Categories */}
@@ -105,31 +120,116 @@ export default function PropositionsPage() {
 
         {/* Tabs - En bas */}
         <div className="flex flex-wrap justify-center gap-1 mt-12 pt-8 border-t border-gray-200">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => {
-                setActiveTab(category.id);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`relative px-6 py-4 text-lg font-medium transition-all duration-200 ${
-                activeTab === category.id
-                  ? "text-primary-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {category.title}
-              {activeTab === category.id && (
-                <motion.div
-                  layoutId="activeTabBottom"
-                  className="absolute top-0 left-0 right-0 h-0.5 bg-primary-600"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-            </button>
-          ))}
+          {categories.map((category) => {
+            const categoryColors = getCategoryColorClasses(category.id);
+            const isActive = activeTab === category.id;
+            return (
+              <button
+                key={category.id}
+                onClick={() => {
+                  setActiveTab(category.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="relative px-6 py-4 text-lg font-medium transition-all duration-200"
+                style={{
+                  color: isActive ? categoryColors.text : "rgb(107, 114, 128)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = "rgb(55, 65, 81)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = "rgb(107, 114, 128)";
+                  }
+                }}
+              >
+                {category.title}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabBottom"
+                    className="absolute top-0 left-0 right-0 h-0.5"
+                    style={{ backgroundColor: categoryColors.underline }}
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Blocs de relance : après les onglets. Rose (Habitat→Mobilités), jaune (Mobilités→Agriculture), vert (Agriculture→Habitat). */}
+        {activeTab === "habitat" && (
+          <section className="max-w-6xl mx-auto mt-12">
+            <div
+              className="rounded-[28px] p-8 md:p-12 text-center"
+              style={{ backgroundColor: "#FDF2F8" }}
+            >
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+                Consultez les propositions Mobilité & Vélo
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("mobilites");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                Consultez les propositions Mobilité & Vélo
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </section>
+        )}
+        {activeTab === "mobilites" && (
+          <section className="max-w-6xl mx-auto mt-12">
+            <div
+              className="rounded-[28px] p-8 md:p-12 text-center"
+              style={{ backgroundColor: "#FEFCE8" }}
+            >
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+                Consultez les propositions Agriculture & Alimentation
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("agriculture");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                Consultez les propositions Agriculture & Alimentation
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </section>
+        )}
+        {activeTab === "agriculture" && (
+          <section className="max-w-6xl mx-auto mt-12">
+            <div
+              className="rounded-[28px] p-8 md:p-12 text-center"
+              style={{ backgroundColor: "#F0FDF4" }}
+            >
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+                Consultez les propositions Habitat & urbanisme
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("habitat");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                Consultez les propositions Habitat & urbanisme
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

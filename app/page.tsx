@@ -8,10 +8,10 @@ import LiveStats from "@/components/LiveStats";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-primary-50">
+    <main className="min-h-screen bg-white">
       {/* Hero Section - Full Width Background */}
-      <div className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20" style={{ backgroundColor: 'rgba(255, 255, 255, 1)', background: 'linear-gradient(180deg, rgba(255, 255, 255, 1) 75%, rgba(255, 225, 117, 1) 99%)', boxShadow: '0px 4px 12px 0px rgba(0, 0, 0, 0.15)' }}>
-        <div className="container mx-auto px-4" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset' }}>
+      <div className="relative bg-white py-12 md:py-[46px] overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Flag - Mobile First (above text), Desktop Second (right column) */}
           <motion.div
@@ -37,7 +37,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-left order-2 md:order-1"
+            className="text-left order-2 md:order-1 relative"
           >
             <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
               Reprenons la parole pour les municipales !
@@ -46,18 +46,18 @@ export default function Home() {
               Nos associations s'unissent pour proposer une plateforme citoyenne non partisane. Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois priorités : urbanisme durable, mobilités douces et agriculture locale. Engageons ensemble les futurs élus pour un territoire harmonieux.
             </p>
             
-            <p className="text-lg font-semibold text-primary-600 mb-6">
-              Votre voix compte : donnez votre avis sur nos propositions !
+            <p className="text-primary-600 mb-6 font-black" style={{ fontSize: '17px', fontWeight: 900 }}>
+              Votre opinion compte : donnez votre avis sur nos propositions !
             </p>
 
             {/* CTA and Stats */}
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12">
-              <div className="w-full md:w-auto">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12 relative z-20" id="cta-stats">
+              <div className="w-full md:w-auto relative z-20">
                 <LiveStats />
               </div>
               <Link
                 href="/propositions"
-                className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl w-full md:w-auto justify-center"
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl w-full md:w-auto justify-center relative z-20"
               >
                 Commencer à voter
                 <ArrowRight className="w-5 h-5" />
@@ -66,10 +66,21 @@ export default function Home() {
           </motion.div>
           </div>
         </div>
+        
+        {/* Bloc jaune qui part du milieu des boutons/compteur (50% de leur hauteur) et fait toute la largeur */}
+        <div 
+          className="absolute left-0 right-0 bg-[#FFE175] hidden md:block"
+          style={{ 
+            top: '340px',
+            bottom: 0,
+            zIndex: 0,
+            margin: 0
+          }}
+        />
       </div>
 
       {/* Main Content Section */}
-      <div className="container mx-auto px-4 py-12 md:py-20">
+      <div className="container mx-auto px-4 py-12 md:py-[46px]">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Section 1: Pour un Hyères Désirable - Full Width */}
           <section className="max-w-4xl">
@@ -123,7 +134,7 @@ export default function Home() {
                 Nos 3 Champs d'Expertise
               </h2>
               <div className="space-y-6">
-                <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
+                <div className="bg-white rounded-lg p-6 shadow-md border-l-4" style={{ borderLeftColor: '#14B8A6' }}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Urbanisme et Habitat
                   </h3>
@@ -131,7 +142,7 @@ export default function Home() {
                     Réviser le Plan Local d'Urbanisme (PLU) pour protéger notre littoral et nos espaces naturels, tout en favorisant un habitat mixte et accessible à tous.
                   </p>
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
+                <div className="bg-white rounded-lg p-6 shadow-md border-l-4" style={{ borderLeftColor: '#EC4899' }}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     Vélo et Mobilités
                   </h3>
@@ -139,9 +150,9 @@ export default function Home() {
                     Placer le vélo au cœur de la mission municipale, apaiser nos rues pour la sécurité de tous et connecter efficacement le territoire.
                   </p>
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary-600">
+                <div className="bg-white rounded-lg p-6 shadow-md border-l-4" style={{ borderLeftColor: '#FFE175' }}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Agriculture Saine
+                    Agriculture & Alimentation
                   </h3>
                   <p className="text-gray-700 leading-relaxed font-medium">
                     Promouvoir une agriculture locale et nourricière (propositions portées par l'Écolieu du Plan du Pont).
@@ -151,10 +162,10 @@ export default function Home() {
             </section>
           </div>
 
-          {/* Section: Votre Voix Compte - Full Width */}
-          <section className="bg-primary-50 rounded-lg p-8 md:p-12 text-center max-w-4xl mx-auto">
+          {/* Section: Votre Opinion Compte - Full Width */}
+          <section className="bg-[#FFE175] rounded-[28px] p-8 md:p-12 text-center max-w-4xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6">
-              Votre Voix Compte
+              Votre Opinion Compte
             </h2>
             <p className="text-lg text-gray-700 leading-relaxed mb-8">
               Cette plateforme est la vôtre. Nous vous invitons à consulter ces propositions et à voter pour celles qui vous semblent prioritaires. Ensemble, faisons entendre une voix citoyenne forte pour construire un développement harmonieux et durable de notre territoire.

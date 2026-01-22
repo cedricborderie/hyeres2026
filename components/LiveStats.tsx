@@ -35,7 +35,7 @@ export default function LiveStats() {
         ) : (
           <>
             <span className="font-bold text-primary-700">{voterCount}</span>{" "}
-            {voterCount <= 1 ? "votant" : "votants"} jusqu'à présent
+            {voterCount <= 1 ? "avis" : "avis"} jusqu'à présent
           </>
         )}
       </p>

@@ -17,7 +17,10 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
   const [voted, setVoted] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const { vote: voteFromContext } = useVoteContext();
+  const { vote: voteFromContext, optimisticVotes, votingIds, removeOptimistic } = useVoteContext();
+  const isGreen = voted || optimisticVotes.has(proposal.id);
+  const isOptimisticOnly = !voted && optimisticVotes.has(proposal.id);
+  const isVoteInFlight = votingIds.has(proposal.id);
 
   // Function to refresh vote status from server
   const refreshVoteStatus = useCallback(async () => {
@@ -63,36 +66,20 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
     }
 
     // If already voted, remove the vote
-    if (voted) {
-      const previousVoted = voted;
-      // Optimistic UI: immediately set to false
+    if (isGreen) {
+      const previouslyVoted = voted;
       setVoted(false);
+      removeOptimistic(proposal.id);
 
-      // Remove vote from server asynchronously
       startTransition(async () => {
         const result = await removeVote(proposal.id);
-
         if (!result.success) {
-          // Revert optimistic UI if error
-          console.error("Failed to remove vote:", result.message);
-          setVoted(previousVoted);
-
-          // Show error message
-          if (result.message) {
-            alert(result.message);
-          }
+          setVoted(previouslyVoted);
+          if (result.message) alert(result.message);
         } else {
-          // Vote was successfully removed - refresh status from server
-          // Wait a bit for database to update
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Refresh vote status from server to ensure UI is in sync
+          await new Promise((r) => setTimeout(r, 300));
           await refreshVoteStatus();
-
-          // Callback to parent
-          if (onVote) {
-            onVote(proposal.id);
-          }
+          if (onVote) onVote(proposal.id);
         }
       });
       return;
@@ -101,20 +88,13 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
     // Use VoteGatekeeper context to handle vote (includes CAPTCHA check)
     // The context will handle CAPTCHA modal if needed
     voteFromContext(proposal.id).then((result) => {
-      // After vote (or CAPTCHA verification), update UI
       if (result.success) {
-        // Optimistic UI update: immediately set voted to true
         setVoted(true);
-        // Then refresh from server to ensure consistency
         refreshVoteStatus();
       }
-      
-      // Callback to parent
-      if (onVote) {
-        onVote(proposal.id);
-      }
-    }).catch((error) => {
-      console.error("Error in vote:", error);
+      if (onVote) onVote(proposal.id);
+    }).catch((err) => {
+      console.error("Error in vote:", err);
     });
   };
 
@@ -124,7 +104,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={`rounded-lg border-2 p-6 bg-white shadow-md hover:shadow-lg transition-shadow ${
-          voted ? "border-green-500 bg-green-50" : "border-gray-200"
+          isGreen ? "border-green-500 bg-green-50" : "border-gray-200"
         }`}
       >
         <div className="flex flex-col h-full">
@@ -141,7 +121,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             {!readOnly && (
               <button
                 onClick={() => setShowDialog(true)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium border border-primary-600 rounded-md bg-primary-50 text-primary-600 hover:bg-primary-100 hover:text-primary-700 transition-colors"
               >
                 En savoir plus
               </button>
@@ -155,17 +135,23 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             ) : (
               <button
                 onClick={handleVote}
-                disabled={isPending}
+                disabled={isPending || (isOptimisticOnly && isVoteInFlight)}
                 className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-colors flex items-center justify-center gap-2 ${
-                  voted
+                  isGreen
                     ? "bg-green-500 text-white hover:bg-green-600"
                     : "bg-primary-600 text-white hover:bg-primary-700"
-                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
-                title={voted ? "Cliquer pour retirer votre vote" : "Cliquer pour soutenir cette proposition"}
+                } ${isPending || (isOptimisticOnly && isVoteInFlight) ? "opacity-50 cursor-not-allowed" : ""}`}
+                title={
+                  isOptimisticOnly && isVoteInFlight
+                    ? "Vote en cours..."
+                    : isGreen
+                      ? "Cliquer pour retirer votre vote"
+                      : "Cliquer pour soutenir cette proposition"
+                }
               >
-                {isPending ? (
+                {isPending || (isOptimisticOnly && isVoteInFlight) ? (
                   "En cours..."
-                ) : voted ? (
+                ) : isGreen ? (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
                     Soutenue
@@ -227,19 +213,16 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
               <button
                 onClick={() => {
                   setShowDialog(false);
-                  // Small delay to ensure dialog closes before vote
-                  setTimeout(() => {
-                    handleVote();
-                  }, 100);
+                  setTimeout(() => handleVote(), 100);
                 }}
-                disabled={isPending}
+                disabled={isPending || isVoteInFlight}
                 className={`flex-1 px-4 py-2 rounded-md transition-colors ${
-                  voted
+                  isGreen
                     ? "bg-green-500 text-white hover:bg-green-600"
                     : "bg-primary-600 text-white hover:bg-primary-700"
-                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                } ${isPending || isVoteInFlight ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                {isPending ? "En cours..." : voted ? "Retirer mon soutien" : "Je soutiens"}
+                {isPending || isVoteInFlight ? "En cours..." : isGreen ? "Retirer mon soutien" : "Je soutiens"}
               </button>
             </div>
           </motion.div>

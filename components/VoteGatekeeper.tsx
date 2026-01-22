@@ -6,8 +6,13 @@ import { verifyHumanToken } from "@/app/actions/security";
 import { Turnstile } from "@marsidev/react-turnstile";
 import confetti from "canvas-confetti";
 
+const HUMAN_FLAG_COOKIE = "human_flag";
+
 interface VoteContextType {
   vote: (proposalId: string) => Promise<VoteResult>;
+  optimisticVotes: Set<string>;
+  votingIds: Set<string>;
+  removeOptimistic: (proposalId: string) => void;
 }
 
 const VoteContext = createContext<VoteContextType | undefined>(undefined);
@@ -20,6 +25,11 @@ export const useVoteContext = () => {
   return context;
 };
 
+function isVerified(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.includes(`${HUMAN_FLAG_COOKIE}=`);
+}
+
 interface VoteGatekeeperProps {
   children: ReactNode;
 }
@@ -29,102 +39,114 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
   const [pendingProposalId, setPendingProposalId] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [optimisticVotes, setOptimisticVotes] = useState<Set<string>>(new Set());
+  const [votingIds, setVotingIds] = useState<Set<string>>(new Set());
   const pendingResolveRef = useRef<((result: VoteResult) => void) | null>(null);
 
-  // TEST: Force modal open for debugging (remove after testing)
-  // Uncomment to test if modal renders at all
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log("TEST: Forcing modal open");
-  //     setIsModalOpen(true);
-  //     setPendingProposalId("test-proposal-id");
-  //   }, 2000);
-  // }, []);
+  const addOptimistic = useCallback((id: string) => {
+    setOptimisticVotes((prev) => new Set(prev).add(id));
+  }, []);
+
+  const removeOptimistic = useCallback((id: string) => {
+    setOptimisticVotes((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
 
   const handleVote = useCallback(async (proposalId: string): Promise<VoteResult> => {
-    // Call server action
-    const result: VoteResult = await submitVote(proposalId);
+    const verified = isVerified();
 
-    console.log("VoteGatekeeper - Vote result:", result);
-
-    if (result.error === "CAPTCHA_REQUIRED") {
-      // Open modal and save proposal ID
-      console.log("VoteGatekeeper - Opening CAPTCHA modal for proposal:", proposalId);
+    if (!verified) {
       setPendingProposalId(proposalId);
       setIsModalOpen(true);
-      
-      // Return a promise that will resolve when the vote is completed via Turnstile
       return new Promise<VoteResult>((resolve) => {
         pendingResolveRef.current = resolve;
       });
     }
 
-    if (result.success) {
-      // Trigger confetti for successful vote
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
+    addOptimistic(proposalId);
+    setVotingIds((prev) => new Set(prev).add(proposalId));
+    try {
+      const result = await submitVote(proposalId);
+      if (result.success) {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        removeOptimistic(proposalId);
+      } else {
+        removeOptimistic(proposalId);
+        if (result.message) alert(result.message);
+      }
+      return result;
+    } catch (err) {
+      removeOptimistic(proposalId);
+      const msg = err instanceof Error ? err.message : "Erreur lors du vote.";
+      alert(msg);
+      return { success: false, message: msg };
+    } finally {
+      setVotingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(proposalId);
+        return next;
       });
-    } else if (result.message && result.error !== "CAPTCHA_REQUIRED") {
-      // Show error message only if it's not a CAPTCHA requirement
-      alert(result.message);
     }
-
-    return result;
-  }, []);
+  }, [addOptimistic, removeOptimistic]);
 
   const handleTurnstileSuccess = useCallback(async (token: string) => {
     setTurnstileToken(token);
   }, []);
 
   const handleVerifyAndRetry = useCallback(async () => {
-    if (!turnstileToken || !pendingProposalId) {
-      return;
-    }
+    if (!turnstileToken || !pendingProposalId) return;
 
     setIsVerifying(true);
+    const proposalIdToRetry = pendingProposalId;
 
     try {
-      // Verify token with server
       const verifyResult = await verifyHumanToken(turnstileToken);
-
       if (!verifyResult.success) {
         alert(verifyResult.message || "La vérification a échoué. Veuillez réessayer.");
-        setIsVerifying(false);
         return;
       }
 
-      // Close modal
       setIsModalOpen(false);
       setTurnstileToken(null);
-      const proposalIdToRetry = pendingProposalId;
       setPendingProposalId(null);
 
-      // Retry the vote
-      const voteResult = await submitVote(proposalIdToRetry);
-
-      if (voteResult.success) {
-        // Trigger confetti
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
+      addOptimistic(proposalIdToRetry);
+      setVotingIds((prev) => new Set(prev).add(proposalIdToRetry));
+      try {
+        const voteResult = await submitVote(proposalIdToRetry);
+        if (voteResult.success) {
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          removeOptimistic(proposalIdToRetry);
+        } else {
+          removeOptimistic(proposalIdToRetry);
+          if (voteResult.message) alert(voteResult.message);
+        }
+        if (pendingResolveRef.current) {
+          pendingResolveRef.current(voteResult);
+          pendingResolveRef.current = null;
+        }
+      } catch (err) {
+        removeOptimistic(proposalIdToRetry);
+        alert("Une erreur est survenue. Veuillez réessayer.");
+        if (pendingResolveRef.current) {
+          pendingResolveRef.current({
+            success: false,
+            message: "Une erreur est survenue. Veuillez réessayer.",
+          });
+          pendingResolveRef.current = null;
+        }
+      } finally {
+        setVotingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(proposalIdToRetry);
+          return next;
         });
-      } else if (voteResult.message) {
-        alert(voteResult.message);
       }
-
-      // Resolve the pending promise to notify ProposalCard
-      if (pendingResolveRef.current) {
-        pendingResolveRef.current(voteResult);
-        pendingResolveRef.current = null;
-      }
-    } catch (error) {
-      console.error("Error verifying and retrying vote:", error);
+    } catch (err) {
       alert("Une erreur est survenue. Veuillez réessayer.");
-      
-      // Resolve with error result
       if (pendingResolveRef.current) {
         pendingResolveRef.current({
           success: false,
@@ -135,7 +157,7 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
     } finally {
       setIsVerifying(false);
     }
-  }, [turnstileToken, pendingProposalId]);
+  }, [turnstileToken, pendingProposalId, addOptimistic, removeOptimistic]);
 
   const handleCloseModal = useCallback(() => {
     if (!isVerifying) {
@@ -174,7 +196,7 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
   }, [isModalOpen, pendingProposalId, turnstileToken]);
 
   return (
-    <VoteContext.Provider value={{ vote: handleVote }}>
+    <VoteContext.Provider value={{ vote: handleVote, optimisticVotes, votingIds, removeOptimistic }}>
       {children}
 
       {/* Captcha Modal */}
@@ -217,17 +239,31 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
             <div className="flex justify-center mb-6">
               {(() => {
                 const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-                console.log("VoteGatekeeper - Turnstile siteKey:", siteKey ? "présente" : "manquante");
+                const isProduction = typeof window !== 'undefined' && !window.location.hostname.includes('localhost');
+                console.log("VoteGatekeeper - Turnstile siteKey:", siteKey ? "présente" : "manquante", {
+                  siteKey: siteKey ? `${siteKey.substring(0, 10)}...` : 'undefined',
+                  hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+                  isProduction
+                });
                 
                 if (!siteKey) {
                   return (
                     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-800 text-sm">
-                        Erreur : La clé Turnstile n'est pas configurée. Vérifiez NEXT_PUBLIC_TURNSTILE_SITE_KEY dans .env.local
+                      <p className="text-red-800 text-sm font-semibold mb-2">
+                        Erreur : La clé Turnstile n'est pas configurée
                       </p>
-                      <p className="text-red-600 text-xs mt-2">
-                        Redémarrez le serveur de développement après avoir ajouté la variable.
+                      <p className="text-red-700 text-xs mb-2">
+                        Variable manquante : <code className="bg-red-100 px-1 rounded">NEXT_PUBLIC_TURNSTILE_SITE_KEY</code>
                       </p>
+                      {isProduction ? (
+                        <p className="text-red-600 text-xs">
+                          ⚠️ En production/staging : Vérifiez que la variable est configurée dans Vercel pour l'environnement <strong>Preview</strong> et redéployez sans cache.
+                        </p>
+                      ) : (
+                        <p className="text-red-600 text-xs">
+                          En local : Ajoutez la variable dans <code>.env.local</code> et redémarrez le serveur.
+                        </p>
+                      )}
                     </div>
                   );
                 }
