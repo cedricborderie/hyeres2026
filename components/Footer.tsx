@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { Mail, Facebook, MessageCircle, CheckCircle2, Linkedin, Newspaper, Megaphone } from "lucide-react";
 import { subscribeToNewsletter } from "@/app/actions/newsletter";
@@ -226,6 +227,16 @@ export default function Footer() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Legal Links Section */}
+        <div className="mt-12 pt-8 border-t border-gray-200 text-center pb-8">
+          <Link 
+            href="/mentions-legales" 
+            className="inline-block text-base text-gray-700 hover:text-primary-600 transition-colors font-medium"
+          >
+            Mentions Légales
+          </Link>
         </div>
       </div>
     </footer>

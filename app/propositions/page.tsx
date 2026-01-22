@@ -54,7 +54,7 @@ export default function PropositionsPage() {
         </div>
 
         {/* Information Blocks for Categories */}
-        {activeTab === "habitat" && (
+        {activeCategory && (
           <>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -67,55 +67,21 @@ export default function PropositionsPage() {
               </h2>
               <div className="grid md:grid-cols-2 gap-6 items-center">
                 <p className="text-base md:text-lg text-gray-700">
-                  Consultez les recommandations détaillées des associations Hyéroises sur l'habitat et l'urbanisme.
+                  Consultez les recommandations détaillées des associations Hyéroises sur {activeCategory.title.toLowerCase()}.
                 </p>
-                <div className="flex justify-start md:justify-end">
-                  <a
-                    href="https://drive.google.com/file/d/1GRhKW3Miyo9QCEc6nZ3-JiuH234rzQM8/view?usp=sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
-                  >
-                    Lire les recommandations
-                    <ExternalLink className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-            <div className="max-w-6xl mx-auto mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-                2 - Votez
-              </h2>
-            </div>
-          </>
-        )}
-
-        {activeTab === "mobilites" && (
-          <>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="max-w-6xl mx-auto mb-8"
-            >
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-                1 - Consultez
-              </h2>
-              <div className="grid md:grid-cols-2 gap-6 items-center">
-                <p className="text-base md:text-lg text-gray-700">
-                  Consultez les recommandations détaillées des associations Hyéroises sur les mobilités douces et le Vélo.
-                </p>
-                <div className="flex justify-start md:justify-end">
-                  <a
-                    href="https://drive.google.com/file/d/18bIH680FzzdQPRwgUTw8heaHUjqoHMnv/view?usp=sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
-                  >
-                    Lire les recommandations
-                    <ExternalLink className="w-5 h-5" />
-                  </a>
-                </div>
+                {activeCategory.manifestoUrl && (
+                  <div className="flex justify-start md:justify-end">
+                    <a
+                      href={activeCategory.manifestoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+                    >
+                      Télécharger les recommandations
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                )}
               </div>
             </motion.div>
             <div className="max-w-6xl mx-auto mb-8">
@@ -127,43 +93,15 @@ export default function PropositionsPage() {
         )}
 
         {/* Proposals Grid */}
-        {activeTab === "agriculture" ? (
-          // Special case for Agriculture - Coming Soon
-          <div className="max-w-2xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-lg border-2 border-ocre-300 p-8 text-center shadow-md"
-            >
-              <div className="text-6xl mb-4">🌾</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Bientôt disponible
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Les propositions dans le domaine de l'agriculture sont en cours
-                de préparation. Elles seront bientôt disponibles sur cette
-                plateforme.
-              </p>
-              <a
-                href="mailto:contact@hyeres2026.fr?subject=Suggestion de proposition - Agriculture&body=Bonjour,%0D%0A%0D%0AJ'aimerais suggérer une proposition dans le domaine de l'agriculture :%0D%0A%0D%0A%0D%0AMerci"
-                className="inline-flex items-center gap-2 bg-ocre-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-ocre-600 transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                Suggérer une idée
-              </a>
-            </motion.div>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            {proposals.map((proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                proposal={proposal}
-                onVote={handleVote}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          {proposals.map((proposal) => (
+            <ProposalCard
+              key={proposal.id}
+              proposal={proposal}
+              onVote={handleVote}
+            />
+          ))}
+        </div>
 
         {/* Tabs - En bas */}
         <div className="flex flex-wrap justify-center gap-1 mt-12 pt-8 border-t border-gray-200">

@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-primary-50">
       {/* Hero Section - Full Width Background */}
-      <div className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset', boxShadow: '0px 4px 12px 0px rgba(0, 0, 0, 0.15)' }}>
+      <div className="bg-gradient-to-b from-white to-gray-50 py-12 md:py-20" style={{ backgroundColor: 'rgba(255, 255, 255, 1)', background: 'linear-gradient(180deg, rgba(255, 255, 255, 1) 75%, rgba(255, 225, 117, 1) 99%)', boxShadow: '0px 4px 12px 0px rgba(0, 0, 0, 0.15)' }}>
         <div className="container mx-auto px-4" style={{ backgroundImage: 'none', background: 'unset', backgroundColor: 'unset' }}>
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Flag - Mobile First (above text), Desktop Second (right column) */}

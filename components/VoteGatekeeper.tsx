@@ -1,13 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import { submitVote, VoteResult } from "@/app/actions/vote";
 import { verifyHumanToken } from "@/app/actions/security";
 import { Turnstile } from "@marsidev/react-turnstile";
 import confetti from "canvas-confetti";
 
 interface VoteContextType {
-  vote: (proposalId: string) => Promise<void>;
+  vote: (proposalId: string) => Promise<VoteResult>;
 }
 
 const VoteContext = createContext<VoteContextType | undefined>(undefined);
@@ -29,6 +29,7 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
   const [pendingProposalId, setPendingProposalId] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const pendingResolveRef = useRef<((result: VoteResult) => void) | null>(null);
 
   // TEST: Force modal open for debugging (remove after testing)
   // Uncomment to test if modal renders at all
@@ -40,7 +41,7 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
   //   }, 2000);
   // }, []);
 
-  const handleVote = useCallback(async (proposalId: string) => {
+  const handleVote = useCallback(async (proposalId: string): Promise<VoteResult> => {
     // Call server action
     const result: VoteResult = await submitVote(proposalId);
 
@@ -51,7 +52,11 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
       console.log("VoteGatekeeper - Opening CAPTCHA modal for proposal:", proposalId);
       setPendingProposalId(proposalId);
       setIsModalOpen(true);
-      return;
+      
+      // Return a promise that will resolve when the vote is completed via Turnstile
+      return new Promise<VoteResult>((resolve) => {
+        pendingResolveRef.current = resolve;
+      });
     }
 
     if (result.success) {
@@ -65,6 +70,8 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
       // Show error message only if it's not a CAPTCHA requirement
       alert(result.message);
     }
+
+    return result;
   }, []);
 
   const handleTurnstileSuccess = useCallback(async (token: string) => {
@@ -107,9 +114,24 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
       } else if (voteResult.message) {
         alert(voteResult.message);
       }
+
+      // Resolve the pending promise to notify ProposalCard
+      if (pendingResolveRef.current) {
+        pendingResolveRef.current(voteResult);
+        pendingResolveRef.current = null;
+      }
     } catch (error) {
       console.error("Error verifying and retrying vote:", error);
       alert("Une erreur est survenue. Veuillez réessayer.");
+      
+      // Resolve with error result
+      if (pendingResolveRef.current) {
+        pendingResolveRef.current({
+          success: false,
+          message: "Une erreur est survenue. Veuillez réessayer.",
+        });
+        pendingResolveRef.current = null;
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -120,6 +142,15 @@ export default function VoteGatekeeper({ children }: VoteGatekeeperProps) {
       setIsModalOpen(false);
       setPendingProposalId(null);
       setTurnstileToken(null);
+      
+      // If modal is closed without voting, resolve with cancelled result
+      if (pendingResolveRef.current) {
+        pendingResolveRef.current({
+          success: false,
+          message: "Vote annulé",
+        });
+        pendingResolveRef.current = null;
+      }
     }
   }, [isVerifying]);
 

@@ -100,9 +100,14 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
 
     // Use VoteGatekeeper context to handle vote (includes CAPTCHA check)
     // The context will handle CAPTCHA modal if needed
-    voteFromContext(proposal.id).then(() => {
-      // After vote (or CAPTCHA verification), refresh status
-      refreshVoteStatus();
+    voteFromContext(proposal.id).then((result) => {
+      // After vote (or CAPTCHA verification), update UI
+      if (result.success) {
+        // Optimistic UI update: immediately set voted to true
+        setVoted(true);
+        // Then refresh from server to ensure consistency
+        refreshVoteStatus();
+      }
       
       // Callback to parent
       if (onVote) {

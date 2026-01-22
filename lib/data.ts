@@ -5,6 +5,7 @@ export type Category = {
   title: string;
   description: string;
   color: string;
+  manifestoUrl?: string;
 };
 
 export interface Proposal {
@@ -22,18 +23,21 @@ export const categories: Category[] = [
     title: "Habitat & Urbanisme",
     description: "20 recommandations pour un développement harmonieux et durable.",
     color: "#6B9BD1", // Bleu doux - stabilité, construction (adouci)
+    manifestoUrl: "https://drive.google.com/file/d/1n2sVFCvmRTWnEpWL6UkcjcDEaw1vp-7v/view?usp=drive_link",
   },
   {
     id: "mobilites",
     title: "Mobilités & Vélo",
-    description: "15 propositions : Jouez la carte du vélo !",
+    description: "14 propositions : Jouez la carte du vélo !",
     color: "#FFA726", // Jaune orangé - énergie, dynamisme (au lieu de rouge)
+    manifestoUrl: "https://drive.google.com/file/d/1N2h2W_e4bf9QarZBcboKNVF8N8l1hJbj/view?usp=drive_link",
   },
   {
     id: "agriculture",
     title: "Agriculture & Alimentation",
-    description: "Protéger la plaine agricole et nos agriculteurs (En construction).",
+    description: "22 propositions pour une agriculture durable et une alimentation saine.",
     color: "#81C784", // Vert doux - croissance, nature (adouci)
+    manifestoUrl: "https://drive.google.com/file/d/1k42ZMQyEocYplVDOxULIwdKngapuldW3/view?usp=drive_link",
   },
 ];
 
@@ -185,121 +189,274 @@ export const proposals: Proposal[] = [
     details: "Soutenir le développement de solutions d'hébergement dignes et hybrides (auberges adossées à des tiers-lieux) pour les travailleurs saisonniers et les jeunes.",
   },
 
-  // --- MOBILITÉS & VÉLO (15 Propositions) ---
+  // --- MOBILITÉS & VÉLO (14 Propositions) ---
+  // Thème 1 : Organisation Agile
   {
     id: "m1",
     categoryId: "mobilites",
-    title: "M1. Créer un poste de Responsable Vélo",
-    summary: "Un pilotage réactif dédié à la mairie et à la métropole.",
-    details: "Recrutement d'un chargé de mission pour coordonner infrastructures et communication. Création de synergies avec la métropole TPM pour fluidifier les projets.",
+    title: "M1. Responsable Vélo",
+    summary: "Un pilotage réactif à la mairie et métropole.",
+    details: "Recrutement d'un chargé de mission pour coordonner infrastructures et communication. Création de synergies avec la métropole pour accélérer les projets.",
   },
   {
     id: "m2",
     categoryId: "mobilites",
     title: "M2. Partager les compétences",
-    summary: "Essaimer la 'Culture Vélo' dans les services.",
-    details: "Former un référent à chaque échelon administratif et former 5% de la Police Municipale (6 agents) à la mobilité cycliste (Brevet FUB) pour assurer une sécurité de proximité.",
+    summary: "Formation des agents et Police Municipale.",
+    details: "Former un référent à chaque échelon et former 5% de la Police Municipale (6 agents) à la mobilité cycliste (Brevet FUB) pour une sécurité de proximité.",
   },
   {
     id: "m3",
     categoryId: "mobilites",
-    title: "M3. Raccourcir les circuits de décision",
-    summary: "Créer un Comité de Pilotage participatif (COPIL).",
-    details: "Associer les usagers et associations à chaque étape pour des aménagements utiles. Publier un bilan de performance public deux fois par an.",
+    title: "M3. Intelligence Collective",
+    summary: "Un Comité de Pilotage participatif (COPIL).",
+    details: "Associer les usagers et associations à chaque étape via un COPIL et publier un bilan de performance public deux fois par an pour ajuster la politique.",
   },
   {
     id: "m4",
     categoryId: "mobilites",
-    title: "M4. Location de vélos au Pôle Gare",
-    summary: "Transformer 5 places de parking en espace de location.",
-    details: "Création d'un espace de 100m² au cœur du pôle multimodal en partenariat avec des loueurs privés, sans subvention publique nécessaire.",
+    title: "M4. Location Vélo Gare",
+    summary: "Transformer 5 places de parking.",
+    details: "Créer un espace de location de 50 à 100m² au sein du futur pôle multimodal en partenariat avec des loueurs privés, sans subvention publique (Coût 0€).",
   },
   {
     id: "m5",
     categoryId: "mobilites",
-    title: "M5. Label 'Employeur Pro-Vélo'",
-    summary: "Faire de la Mairie un employeur pro-vélo exemplaire (Niveau Or).",
-    details: "Engagement immédiat de la municipalité dans la démarche pour faire de la collectivité un modèle de mobilité durable pour ses propres agents.",
+    title: "M5. Employeur Pro-Vélo",
+    summary: "Viser le niveau Or pour la Mairie.",
+    details: "Engagement immédiat de la municipalité dans la démarche 'Employeur Pro-Vélo' pour faire de la collectivité un modèle de mobilité durable.",
   },
   {
     id: "m6",
     categoryId: "mobilites",
     title: "M6. Promotion dynamique",
-    summary: "Communication et événements (Fête du vélo).",
-    details: "Intégrer les mobilités actives dans toutes les communications municipales et organiser des événements réguliers ambitieux.",
+    summary: "Communication et Fête du vélo.",
+    details: "Promouvoir les mobilités actives dans toutes les communications municipales et organiser des événements réguliers et ambitieux.",
   },
+
+  // Thème 2 : Apaiser nos rues
   {
     id: "m7",
     categoryId: "mobilites",
-    title: "M7. Priorité à nos enfants (13 écoles)",
-    summary: "Réduire drastiquement le transit devant les écoles.",
-    details: "Transformation en zones de rencontre ou mise en sens unique devant les 13 écoles identifiées pour libérer de l'espace de vie et sécuriser les entrées/sorties.",
+    title: "M7. Priorité enfants (13 écoles)",
+    summary: "Réduire drastiquement la vitesse et le transit.",
+    details: "Transformer les abords des 13 écoles retenues en zones de rencontre ou sens uniques pour libérer de l'espace de vie sans bloquer la desserte locale.",
   },
   {
     id: "m8",
     categoryId: "mobilites",
-    title: "M8. Le Double Sens Cyclable",
-    summary: "Généralisation conformément à la loi sur les voies sens uniques à 30km/h.",
-    details: "Maillage du centre-ville avec signalisation systématique des doubles sens (interventions légères : marquage/panneaux) pour éviter les détours inutiles aux cyclistes.",
+    title: "M8. Double Sens Cyclable",
+    summary: "Fluidité et visibilité en centre-ville.",
+    details: "Généraliser la signalisation des doubles sens (interventions légères : marquage, panneaux) pour éviter les détours inutiles aux cyclistes.",
   },
   {
     id: "m9",
     categoryId: "mobilites",
-    title: "M9. Extension du Cœur de Ville",
-    summary: "Zones piétonnes et zones de rencontre.",
-    details: "Redonner de l'espace à la vie et au commerce de proximité tout en maintenant une accessibilité pour les résidents et livraisons.",
+    title: "M9. Extension Cœur de Ville",
+    summary: "Zones piétonnes et de rencontre.",
+    details: "Redonner de l'espace à la vie et au commerce de proximité (priorité piétonne) tout en préservant l'accessibilité pour les résidents et les livraisons.",
   },
   {
     id: "m10",
     categoryId: "mobilites",
-    title: "M10. Visibilité aux passages piétons",
-    summary: "Suppression du stationnement 5m en amont (Loi LOM).",
-    details: "Mise en conformité légale : neutralisation du stationnement masquant la visibilité piétonne, remplacé par des arceaux vélos ou de la végétalisation.",
+    title: "M10. Visibilité Passages Piétons",
+    summary: "Mise en conformité Loi LOM.",
+    details: "Neutraliser systématiquement le stationnement 5 mètres en amont des passages piétons (arceaux vélos, végétalisation) pour la sécurité des plus vulnérables.",
   },
   {
     id: "m11",
     categoryId: "mobilites",
-    title: "M11. Cohabitation pacifiée",
+    title: "M11. Cohabitation Pacifiée",
     summary: "Sensibilisation et pédagogie.",
-    details: "Actions pour expliquer les nouveaux aménagements (sas vélo, voie verte, etc.) et inciter à la vigilance envers les usagers vulnérables.",
+    details: "Sensibiliser les automobilistes et expliquer les nouveaux aménagements (sas vélo, voie verte, etc.) pour inciter à la vigilance et à la modération.",
   },
+
+  // Thème 3 : Connecter le territoire
   {
     id: "m12",
     categoryId: "mobilites",
-    title: "M12. Maillage Territorial 2032",
-    summary: "Relier les 9 mairies annexes et le centre.",
-    details: "Créer des itinéraires sécurisés et directs. Déployer des aménagements de transition dès le début du mandat sur les carrefours critiques pour un bénéfice immédiat.",
+    title: "M12. Maillage Territorial",
+    summary: "Relier 8 mairies sur 10.",
+    details: "Créer des itinéraires efficaces entre les centres-villes. Déployer des aménagements de transition immédiats sur les carrefours critiques avant pérennisation.",
   },
   {
     id: "m13",
     categoryId: "mobilites",
-    title: "M13. Activer le 'Réflexe Vélo'",
+    title: "M13. Activer le Réflexe Vélo",
     summary: "Signalétique unifiée et jalonnement.",
-    details: "Déployer un jalonnement systématique vers les points d'intérêt (indiquant le temps de trajet vélo) et une signalisation incitant les voitures à la prudence.",
+    details: "Déployer un jalonnement dense vers les points d'intérêt et une signalisation incitant naturellement au partage de la route.",
   },
   {
     id: "m14",
     categoryId: "mobilites",
     title: "M14. Combattre l'enclavement",
-    summary: "Servitudes de passage et Loi LAURE.",
-    details: "Préempter des passages clés pour éviter les détours. Appliquer la Loi LAURE : chaque rénovation de voirie doit obligatoirement intégrer un aménagement cyclable.",
-  },
-  {
-    id: "m15",
-    categoryId: "mobilites",
-    title: "M15. Intelligence Collective",
-    summary: "Co-construction avec les associations.",
-    details: "Mobiliser l'expertise gratuite des usagers locaux pour dessiner les tracés les plus efficaces et optimiser l'utilisation des deniers publics.",
+    summary: "Chemins de proximité et Loi LAURE.",
+    details: "Préempter des passages clés pour restaurer les continuités et appliquer strictement la Loi LAURE : chaque rénovation de voirie doit intégrer un aménagement cyclable.",
   },
 
-  // --- AGRICULTURE (Placeholder) ---
+  // --- AGRICULTURE & ALIMENTATION (22 Propositions) ---
+  // Thème 1 : Gouvernance & Actions Conjointes
   {
     id: "a1",
     categoryId: "agriculture",
-    title: "A1. Consultation : Terres Agricoles",
-    summary: "Ce volet est en cours de construction.",
-    details: "La préservation de la plaine agricole et l'alimentation locale sont des enjeux majeurs. Nous finalisons nos propositions. Vous avez une idée ou une expertise ? Écrivez-nous pour participer.",
-    external_link: "mailto:contact@changerdere.org"
+    title: "A1. Nommer un élu dédié",
+    summary: "Un engagement réel sans cumul de mandats.",
+    details: "Nommer un(e) élu(e) Agriculture et Alimentation durable qui ne pourra pas cumuler plus de 2 délégations afin de garantir un engagement réel et total dédié à ces deux thèmes.",
+  },
+  {
+    id: "a2",
+    categoryId: "agriculture",
+    title: "A2. Commission Citoyenne Agricole",
+    summary: "Responsabiliser élus, pros et citoyens.",
+    details: "Créer une commission 'multi-acteurs' pilotée par la mairie incluant élus, associations, citoyens, professionnels, équipes éducatives, parents et agriculteurs.",
+  },
+
+  // Thème 2 : Agriculture Durable (Pour les Agriculteurs)
+  {
+    id: "a3",
+    categoryId: "agriculture",
+    title: "A3. Sauvegarder les terres (ZAP)",
+    summary: "Zéro Artificialisation Nette et Zones Protégées.",
+    details: "Appliquer l'objectif Zéro Artificialisation Nette (ZAN) et mettre en place des Zones Agricoles Protégées (ZAP) sur la commune pour empêcher le bétonnage des terres fertiles.",
+  },
+  {
+    id: "a4",
+    categoryId: "agriculture",
+    title: "A4. Mobiliser les terres privées",
+    summary: "Inciter les propriétaires à louer ou cultiver.",
+    details: "Encourager la mise en culture des terres privées inexploitées via des incitations fiscales ou des taxes, et faciliter les contrats de fermage pour lutter contre la spéculation immobilière.",
+  },
+  {
+    id: "a5",
+    categoryId: "agriculture",
+    title: "A5. Espaces-test agricoles",
+    summary: "Aider les jeunes agriculteurs à se lancer.",
+    details: "Mettre à disposition des terres communales pour créer des espaces-tests permettant à de nouveaux agriculteurs de vérifier la viabilité de leur projet dans un cadre sécurisé.",
+  },
+  {
+    id: "a6",
+    categoryId: "agriculture",
+    title: "A6. Foncière Agricole (SCIC)",
+    summary: "La ville achète, l'agriculteur cultive.",
+    details: "Créer une coopérative (SCIC ou SCOP) pour acquérir du foncier, réaliser les aménagements nécessaires (serres, irrigation) et louer à des exploitants locaux sans spéculation.",
+  },
+  {
+    id: "a7",
+    categoryId: "agriculture",
+    title: "A7. Habitat léger agricole",
+    summary: "Loger les agriculteurs sur place.",
+    details: "Autoriser et encadrer l'installation d'habitats légers pour les maraîchers afin de contourner la pression immobilière et leur permettre de vivre dignement sur leur lieu de production.",
+  },
+
+  // Thème 3 : Agriculture Durable (Pour les Habitants)
+  {
+    id: "a8",
+    categoryId: "agriculture",
+    title: "A8. Jardins et vergers urbains",
+    summary: "Des espaces verts comestibles pour tous.",
+    details: "Transformer les espaces verts en massifs nourriciers et créer des jardins partagés animés par des agents communaux, accessibles aux habitants via une carte membre.",
+  },
+  {
+    id: "a9",
+    categoryId: "agriculture",
+    title: "A9. Ferme Municipale Pédagogique",
+    summary: "Produire pour les cantines et éduquer.",
+    details: "Créer une ferme gérée par des agents municipaux : production agro-écologique pour la restauration collective et lieu pédagogique pour sensibiliser les écoles et le public.",
+  },
+
+  // Thème 4 : Alimentation Durable & Social
+  {
+    id: "a10",
+    categoryId: "agriculture",
+    title: "A10. Sécurité Sociale de l'Alimentation",
+    summary: "Un droit à bien manger pour tous.",
+    details: "Soutenir l'expérimentation d'une Sécurité Sociale de l'Alimentation (SSA) pour garantir un revenu décent aux paysans et l'accès à une alimentation saine pour tous les foyers.",
+  },
+  {
+    id: "a11",
+    categoryId: "agriculture",
+    title: "A11. Maison de l'Alimentation",
+    summary: "Un tiers-lieu de partage et de vente.",
+    details: "Créer un lieu ressource ouvert à tous : vente de produits locaux, distribution solidaire, éducation populaire et espace pour les associations.",
+  },
+  {
+    id: "a12",
+    categoryId: "agriculture",
+    title: "A12. Programme Pédagogique",
+    summary: "Éduquer au goût et au zéro-déchet.",
+    details: "Lancer un programme municipal de sensibilisation (écoles, affichage) sur l'alimentation durable, la lutte contre le gaspillage et la valorisation des déchets organiques.",
+  },
+  {
+    id: "a13",
+    categoryId: "agriculture",
+    title: "A13. Marché Paysan Festif",
+    summary: "Un rendez-vous hebdomadaire convivial.",
+    details: "Créer un marché (nocturne ou week-end) avec producteurs locaux sous charte stricte, food-trucks et animations culturelles pour recréer du lien social.",
+  },
+
+  // Thème 5 : Restauration Collective (Cantines)
+  {
+    id: "a14",
+    categoryId: "agriculture",
+    title: "A14. Audit Participatif Cantines",
+    summary: "Évaluer la satisfaction et améliorer.",
+    details: "Lancer une enquête 'multi-acteurs' pilotée par la mairie pour diagnostiquer la restauration collective et établir un cahier des charges plus ambitieux que la loi EGalim.",
+  },
+  {
+    id: "a15",
+    categoryId: "agriculture",
+    title: "A15. Contrats Producteurs Locaux",
+    summary: "Sécuriser les débouchés de nos agriculteurs.",
+    details: "Développer des contrats directs entre la commune et les producteurs locaux pour fournir les cantines, afin de soutenir l'économie du territoire.",
+  },
+  {
+    id: "a16",
+    categoryId: "agriculture",
+    title: "A16. Plus de menus végétariens",
+    summary: "Santé et écologie dans l'assiette.",
+    details: "Favoriser la cuisine végétale : respecter a minima l'obligation hebdomadaire et instaurer une alternative végétarienne quotidienne (choix) pour tous.",
+  },
+  {
+    id: "a17",
+    categoryId: "agriculture",
+    title: "A17. Formation Cuisine Durable",
+    summary: "Valoriser le savoir-faire des agents.",
+    details: "Mettre en œuvre un programme de formation obligatoire pour le personnel des cantines (cuisine végétale, produits frais) via des conventions mutualisées.",
+  },
+  {
+    id: "a18",
+    categoryId: "agriculture",
+    title: "A18. Stop Ultra-transformé",
+    summary: "Priorité au fait-maison et produits bruts.",
+    details: "Éliminer progressivement les produits industriels ultra-transformés (additifs, texturants) des menus au profit de produits bruts, frais et de saison.",
+  },
+  {
+    id: "a19",
+    categoryId: "agriculture",
+    title: "A19. Stop Plastique (Cantines)",
+    summary: "Protéger la santé des enfants.",
+    details: "Supprimer définitivement les contenants et ustensiles à usage unique et en plastique pour éviter la migration de perturbateurs endocriniens.",
+  },
+  {
+    id: "a20",
+    categoryId: "agriculture",
+    title: "A20. Portions sur-mesure",
+    summary: "Réduire le gâchis dans les assiettes.",
+    details: "Mettre en place un système de portions adaptées à l'appétit réel des enfants et des séniors pour lutter efficacement contre le gaspillage alimentaire.",
+  },
+  {
+    id: "a21",
+    categoryId: "agriculture",
+    title: "A21. Compostage Systématique",
+    summary: "Valoriser les restes en engrais local.",
+    details: "Organiser la collecte et le compostage des déchets organiques de la restauration collective pour amender les terres agricoles locales.",
+  },
+  {
+    id: "a22",
+    categoryId: "agriculture",
+    title: "A22. Projet Alimentaire Territorial",
+    summary: "Collaborer avec la Métropole.",
+    details: "Travailler en synergie avec la métropole TPM pour appliquer concrètement les actions du Projet Alimentaire Territorial (PAT) sur la commune de Hyères.",
   },
 ];
 
