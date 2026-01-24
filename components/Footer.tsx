@@ -99,7 +99,7 @@ export default function Footer() {
             >
               <Image
                 src="/logos/cil-des-rougieres.png"
-                alt="CIL des Rougières"
+                alt="CIL du Quartier des Rougières"
                 width={200}
                 height={200}
                 className="w-full h-full object-contain"

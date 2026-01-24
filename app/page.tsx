@@ -23,13 +23,19 @@ export default function Home() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-left order-2 lg:order-1 pt-8 lg:pt-[100px]"
+              className="text-left order-2 lg:order-1 -mt-[30px] pt-[2px] lg:pt-[70px]"
             >
               <h1 className="text-xl font-semibold text-gray-900 mb-4 leading-7">
                 Reprenons la parole pour les municipales !
               </h1>
               <p className="text-base font-medium text-gray-700 leading-[20px]">
-                Nos associations s'unissent pour proposer une plateforme citoyenne non partisane. Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois priorités : urbanisme durable, mobilités douces et agriculture locale. Engageons ensemble les futurs élus pour un territoire harmonieux.
+                Nos associations s'unissent pour proposer une plateforme citoyenne non partisane.
+                <br />
+                <br />
+                Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois axes : <span className="font-bold" style={{ color: "#14B8A6" }}>urbanisme durable</span>, <span className="font-bold" style={{ color: "#EC4899" }}>mobilités douces</span> et <span className="font-bold" style={{ color: "#EAB308" }}>agriculture locale</span>.
+                <br />
+                <br />
+                Engageons ensemble les futurs élus pour un territoire harmonieux.
               </p>
             </motion.div>
 
@@ -107,21 +113,21 @@ export default function Home() {
                 Les élections municipales sont un moment clé où se choisit la direction qui impactera notre quotidien pour les années à venir. Notre initiative, non partisane, vise à ce que les citoyens se réapproprient ce débat. Nous souhaitons :
               </p>
               <ul className="space-y-4 text-base text-gray-700">
-                <li className="flex items-start">
+                <li className="flex items-start leading-[20px]">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span className="font-medium"><strong>Proposer</strong> des solutions concrètes autour de trois piliers majeurs : un urbanisme concerté, respectueux du patrimoine naturel et bâti, des mobilités douces et une agriculture locale nourricière pour tous.</span>
+                  <span className="font-medium"><span className="underline">Proposer des solutions concrètes</span> autour de trois piliers majeurs : un urbanisme concerté, respectueux du patrimoine naturel et bâti, des mobilités douces et une agriculture locale nourricière pour tous.</span>
                 </li>
-                <li className="flex items-start">
+                <li className="flex items-start leading-[20px]">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span className="font-medium"><strong>Engager</strong> les candidats en leur présentant ces programmes et en obtenant des engagements précis sur leur mise en œuvre.</span>
+                  <span className="font-medium"><span className="underline">Engager les candidats</span> en leur présentant ces programmes et en obtenant des engagements précis sur leur mise en œuvre.</span>
                 </li>
-                <li className="flex items-start">
+                <li className="flex items-start leading-[20px]">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span className="font-medium"><strong>Éclairer</strong> le vote de chacun en analysant les programmes des candidats à la lumière de leurs engagements envers ces mesures.</span>
+                  <span className="font-medium"><span className="underline">Éclairer le vote de chacun</span> en analysant les programmes des candidats à la lumière de leurs engagements envers ces mesures.</span>
                 </li>
-                <li className="flex items-start">
+                <li className="flex items-start leading-[20px]">
                   <span className="text-primary-600 mr-3 font-bold">•</span>
-                  <span><strong>Responsabiliser</strong> les futurs élus en suivant le respect de leurs promesses tout au long du mandat.</span>
+                  <span><span className="underline">Responsabiliser les futurs élus</span> en veillant le respect de leurs promesses tout au long du mandat.</span>
                 </li>
               </ul>
             </section>
