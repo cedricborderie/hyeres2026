@@ -73,7 +73,7 @@ export default function Home() {
               <LiveStats />
               <Link
                 href="/propositions"
-                className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg shrink-0"
+                className="h-14 inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-8 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg shrink-0"
               >
                 Commencer à voter
                 <ArrowRight className="w-5 h-5" />
@@ -162,7 +162,7 @@ export default function Home() {
                     Agriculture & Alimentation
                   </h3>
                   <p className="text-gray-700 leading-[20px] font-medium">
-                    Promouvoir une agriculture locale et nourricière (propositions portées par l'Écolieu du Plan du Pont).
+                    Sanctuariser les terres agricoles et garantir une alimentation locale et saine, des marchés jusqu'aux cantines scolaires.
                   </p>
                 </div>
               </div>

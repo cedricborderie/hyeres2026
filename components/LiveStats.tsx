@@ -28,8 +28,8 @@ export default function LiveStats() {
   }, []);
 
   return (
-    <div className="bg-primary-50 border border-primary-200 rounded-lg py-[13px] px-4 text-center shrink-0">
-      <p className="text-base font-medium text-gray-700 align-middle">
+    <div className="h-14 flex items-center justify-center bg-primary-50 border border-primary-200 rounded-lg px-4 shrink-0">
+      <p className="text-base font-medium text-gray-700">
         {loading ? (
           <span className="text-gray-500">Chargement...</span>
         ) : (
