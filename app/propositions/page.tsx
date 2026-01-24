@@ -4,8 +4,14 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { categories, getProposalsByCategory, getCategoryById } from "@/lib/data";
 import ProposalCard from "@/components/ProposalCard";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, Building2, Bike, Sprout } from "lucide-react";
 import { getCategoryColorClasses } from "@/lib/utils";
+
+const categoryIcons: Record<string, typeof Building2> = {
+  habitat: Building2,
+  mobilites: Bike,
+  agriculture: Sprout,
+};
 
 export default function PropositionsPage() {
   const [activeTab, setActiveTab] = useState("habitat");
@@ -34,11 +40,12 @@ export default function PropositionsPage() {
           {categories.map((category) => {
             const categoryColors = getCategoryColorClasses(category.id);
             const isActive = activeTab === category.id;
+            const Icon = categoryIcons[category.id];
             return (
               <button
                 key={category.id}
                 onClick={() => setActiveTab(category.id)}
-                className="relative px-6 py-4 text-lg font-medium transition-all duration-200"
+                className="relative flex items-center gap-2 px-6 py-4 text-lg font-medium transition-all duration-200 [&_svg]:shrink-0"
                 style={{
                   color: isActive ? categoryColors.text : "rgb(107, 114, 128)",
                 }}
@@ -53,6 +60,7 @@ export default function PropositionsPage() {
                   }
                 }}
               >
+                <Icon className="w-5 h-5 text-current" aria-hidden />
                 {category.title}
                 {isActive && (
                   <motion.div
@@ -81,7 +89,7 @@ export default function PropositionsPage() {
                 1 - Consultez
               </h2>
               <div className="grid md:grid-cols-2 gap-6 items-center">
-                <p className="text-base md:text-lg text-gray-700">
+                <p className="text-base md:text-lg text-gray-700 leading-[20px]">
                   Consultez les recommandations détaillées des associations Hyéroises sur {activeCategory.title.toLowerCase()}.
                 </p>
                 {activeCategory.manifestoUrl && (
@@ -118,11 +126,38 @@ export default function PropositionsPage() {
           ))}
         </div>
 
+        {/* 3 - Proposez : entre les propositions et les onglets du bas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="max-w-6xl mx-auto mt-12 mb-8"
+        >
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+            3 - Proposez
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6 items-center">
+            <p className="text-base md:text-lg text-gray-700 leading-[20px]">
+              Si vous pensez qu'il manque une proposition, écrivez-nous.
+            </p>
+            <div className="flex justify-start md:justify-end">
+              <a
+                href="mailto:contact@hyeres2026.org?subject=Nouvelle proposition pour la plateforme"
+                className="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                Soumettre une proposition
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Tabs - En bas */}
         <div className="flex flex-wrap justify-center gap-1 mt-12 pt-8 border-t border-gray-200">
           {categories.map((category) => {
             const categoryColors = getCategoryColorClasses(category.id);
             const isActive = activeTab === category.id;
+            const Icon = categoryIcons[category.id];
             return (
               <button
                 key={category.id}
@@ -130,7 +165,7 @@ export default function PropositionsPage() {
                   setActiveTab(category.id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="relative px-6 py-4 text-lg font-medium transition-all duration-200"
+                className="relative flex items-center gap-2 px-6 py-4 text-lg font-medium transition-all duration-200 [&_svg]:shrink-0"
                 style={{
                   color: isActive ? categoryColors.text : "rgb(107, 114, 128)",
                 }}
@@ -145,6 +180,7 @@ export default function PropositionsPage() {
                   }
                 }}
               >
+                <Icon className="w-5 h-5 text-current" aria-hidden />
                 {category.title}
                 {isActive && (
                   <motion.div
@@ -160,14 +196,15 @@ export default function PropositionsPage() {
           })}
         </div>
 
-        {/* Blocs de relance : après les onglets. Rose (Habitat→Mobilités), jaune (Mobilités→Agriculture), vert (Agriculture→Habitat). */}
+        {/* Blocs de relance : après les onglets. Rose (Habitat→Mobilités), jaune (Mobilités→Agriculture), vert (Agriculture→Habitat). Pictogramme = catégorie cible. */}
         {activeTab === "habitat" && (
           <section className="max-w-6xl mx-auto mt-12">
             <div
               className="rounded-[28px] p-8 md:p-12 text-center"
               style={{ backgroundColor: "#FDF2F8" }}
             >
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 flex items-end justify-center gap-2 flex-wrap">
+                <Bike className="w-9 h-9 shrink-0" style={{ color: "#EC4899" }} aria-hidden />
                 Consultez les propositions Mobilité & Vélo
               </h2>
               <button
@@ -190,7 +227,8 @@ export default function PropositionsPage() {
               className="rounded-[28px] p-8 md:p-12 text-center"
               style={{ backgroundColor: "#FEFCE8" }}
             >
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 flex items-end justify-center gap-2 flex-wrap">
+                <Sprout className="w-9 h-9 shrink-0" style={{ color: "#C4A035" }} aria-hidden />
                 Consultez les propositions Agriculture & Alimentation
               </h2>
               <button
@@ -213,7 +251,8 @@ export default function PropositionsPage() {
               className="rounded-[28px] p-8 md:p-12 text-center"
               style={{ backgroundColor: "#F0FDF4" }}
             >
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 flex items-end justify-center gap-2 flex-wrap">
+                <Building2 className="w-9 h-9 shrink-0" style={{ color: "#14B8A6" }} aria-hidden />
                 Consultez les propositions Habitat & urbanisme
               </h2>
               <button

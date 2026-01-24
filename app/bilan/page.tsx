@@ -44,9 +44,8 @@ export default function BilanPage() {
     votedProposalIds.has(p.id)
   );
 
-  // Build WhatsApp message with proposal titles
-  const proposalTitles = votedProposals.map((p) => p.title).join(", ");
-  const shareMessage = `Je viens de sélectionner mes priorités pour Hyères : ${proposalTitles}\n\nDécouvre ma liste complète ici : ${shareUrl || "https://hyeres2026.org"}`;
+  // Message de partage (WhatsApp, etc.) – sans rappel des priorités dans le texte
+  const shareMessage = `Je viens de sélectionner mes priorités pour Hyères.\n\nDécouvre la liste complète ici : ${shareUrl || "https://hyeres2026.org"}`;
 
   const whatsappUrl = shareUrl
     ? `https://wa.me/?text=${encodeURIComponent(shareMessage)}`

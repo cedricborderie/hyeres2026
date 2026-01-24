@@ -112,7 +112,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               {proposal.title}
             </h3>
-            <p className="text-gray-600 mb-4 line-clamp-3">
+            <p className="text-gray-600 mb-4 line-clamp-3 leading-[20px]">
               {proposal.summary}
             </p>
           </div>
@@ -200,7 +200,7 @@ export default function ProposalCard({ proposal, onVote, readOnly = false }: Pro
             <h2 id="dialog-title" className="text-2xl font-bold text-gray-900 mb-4">
               {proposal.title}
             </h2>
-            <div className="text-gray-700 whitespace-pre-line mb-6">
+            <div className="text-gray-700 whitespace-pre-line mb-6 leading-[20px]">
               {proposal.details}
             </div>
             <div className="flex gap-2">
