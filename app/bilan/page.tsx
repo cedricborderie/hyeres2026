@@ -60,6 +60,15 @@ export default function BilanPage() {
     ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
     : "";
 
+  const trackShare = (reseau: "WhatsApp" | "Facebook" | "LinkedIn") => {
+    if (typeof window !== "undefined" && "plausible" in window) {
+      (window as { plausible?: (e: string, o?: { props?: Record<string, string | number> }) => void }).plausible?.(
+        "Partage Mes Priorités",
+        { props: { réseau, nb_propositions: votedProposals.length } }
+      );
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-green-50">
       <div className="container mx-auto px-4 py-8 md:py-12">
@@ -158,6 +167,7 @@ export default function BilanPage() {
                       href={whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackShare("WhatsApp")}
                       className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
                     >
                       <MessageCircle className="w-5 h-5" />
@@ -170,6 +180,7 @@ export default function BilanPage() {
                       href={facebookUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackShare("Facebook")}
                       className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
                       <Facebook className="w-5 h-5" />
@@ -182,6 +193,7 @@ export default function BilanPage() {
                       href={linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackShare("LinkedIn")}
                       className="inline-flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
                     >
                       <Linkedin className="w-5 h-5" />

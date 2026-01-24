@@ -32,6 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${questrial.variable} overflow-x-hidden`}>
+      <head>
+        {/* Plausible Analytics – statistiques respectueuses de la vie privée */}
+        <Script
+          src="https://plausible.io/js/pa-ZfKvTU8hH79U4TrmVchcq.js"
+          strategy="afterInteractive"
+        />
+        <Script id="plausible-init" strategy="afterInteractive">
+          {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init();`}
+        </Script>
+      </head>
       <body className={`${questrial.className} flex flex-col min-h-screen overflow-x-hidden max-w-full`}>
         <VoteGatekeeper>
           <Header />
