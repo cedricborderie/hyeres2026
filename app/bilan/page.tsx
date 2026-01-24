@@ -64,7 +64,7 @@ export default function BilanPage() {
     if (typeof window !== "undefined" && "plausible" in window) {
       (window as { plausible?: (e: string, o?: { props?: Record<string, string | number> }) => void }).plausible?.(
         "Partage Mes Priorités",
-        { props: { réseau, nb_propositions: votedProposals.length } }
+        { props: { réseau: reseau, nb_propositions: votedProposals.length } }
       );
     }
   };
