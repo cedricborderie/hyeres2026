@@ -87,3 +87,49 @@ export function getUniqueVoterCount(): number {
   const votes = getVotedProposals();
   return votes.size > 0 ? 1 : 0;
 }
+
+// Get color values and classes based on category
+export function getCategoryColorClasses(categoryId: string) {
+  switch (categoryId) {
+    case "habitat":
+      return {
+        text: "#14B8A6",
+        textHover: "#0d9488",
+        bg: "#14B8A6",
+        bgHover: "#0d9488",
+        border: "#14B8A6",
+        bgLight: "#f0fdfa", // teal-50
+        underline: "#14B8A6",
+      };
+    case "mobilites":
+      return {
+        text: "#EC4899",
+        textHover: "#db2777",
+        bg: "#EC4899",
+        bgHover: "#db2777",
+        border: "#EC4899",
+        bgLight: "#fdf2f8", // pink-50
+        underline: "#EC4899",
+      };
+    case "agriculture":
+      return {
+        text: "#b45309", // yellow-700
+        textHover: "#92400e", // yellow-800
+        bg: "#FFE175",
+        bgHover: "#FFD54F",
+        border: "#b45309", // yellow-700
+        bgLight: "#fefce8", // yellow-50
+        underline: "#FFE175",
+      };
+    default:
+      return {
+        text: "#008179", // primary-600
+        textHover: "#006158", // primary-700
+        bg: "#008179",
+        bgHover: "#006158",
+        border: "#008179",
+        bgLight: "#e6fffd", // primary-50
+        underline: "#008179",
+      };
+  }
+}

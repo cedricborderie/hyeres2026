@@ -7,15 +7,27 @@ import { cookies } from "next/headers";
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "dev-secret-key-change-in-production";
 const JWT_SECRET_KEY = new TextEncoder().encode(JWT_SECRET);
 
-// Cookie name for the human verification badge
+// Cookie name for the human verification badge (server-only, httpOnly)
 const HUMAN_BADGE_COOKIE = "human_badge";
 
-// Cookie options
+// Cookie name for client-side "fast pass" check (avoids server roundtrip)
+const HUMAN_FLAG_COOKIE = "human_flag";
+
+// Cookie options for human_badge (secure, httpOnly)
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
   maxAge: 60 * 60 * 24, // 24 hours
+  path: "/",
+};
+
+// Cookie options for human_flag (client-readable fast pass)
+const HUMAN_FLAG_OPTIONS = {
+  httpOnly: false,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  maxAge: 86400, // 24 hours
   path: "/",
 };
 
@@ -85,9 +97,12 @@ export async function verifyHumanToken(token: string): Promise<{ success: boolea
       .setExpirationTime("24h")
       .sign(JWT_SECRET_KEY);
 
-    // Set secure cookie
+    // Set secure httpOnly cookie (used by server for submitVote)
     const cookieStore = await cookies();
     cookieStore.set(HUMAN_BADGE_COOKIE, jwt, COOKIE_OPTIONS);
+
+    // Set fast-pass cookie (client-readable, avoids server roundtrip for verification check)
+    cookieStore.set(HUMAN_FLAG_COOKIE, "1", HUMAN_FLAG_OPTIONS);
 
     return {
       success: true,
