@@ -79,7 +79,7 @@ UPDATE proposals SET
 WHERE id = 'h9' AND category_id = '00000000-0000-0000-0000-000000000001';
 
 UPDATE proposals SET 
-  title = 'H10. Anticiper le trait de côte',
+  title = 'H10. Anticiper le retrait du trait de côte',
   description = 'Définir des zones d''études prospectives.',
   content_text = 'Identifier clairement dans le PLU les zones menacées par la montée des eaux et le recul du trait de côte pour geler les projets à risque.',
   updated_at = NOW()

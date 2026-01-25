@@ -112,7 +112,7 @@ export const proposals: Proposal[] = [
   {
     id: "h10",
     categoryId: "habitat",
-    title: "H10. Anticiper le trait de côte",
+    title: "H10. Anticiper le retrait du trait de côte",
     summary: "Définir des zones d'études prospectives.",
     details: "Identifier clairement dans le PLU les zones menacées par la montée des eaux et le recul du trait de côte pour geler les projets à risque.",
   },

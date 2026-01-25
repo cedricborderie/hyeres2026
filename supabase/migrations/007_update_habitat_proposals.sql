@@ -61,7 +61,7 @@ INSERT INTO proposals (id, category_id, title, description, content_text, extern
  'Mettre à jour le Plan de Prévention des Risques d''Inondation pour tenir compte de l''imperméabilisation des sols.',
  NULL),
 
-('h10', '00000000-0000-0000-0000-000000000001', '10. Anticiper le trait de côte',
+('h10', '00000000-0000-0000-0000-000000000001', '10. Anticiper le retrait du trait de côte',
  'Définir des zones d''études prospectives.',
  'Identifier dans le PLU les zones menacées par la montée des eaux pour geler les projets à risque.',
  NULL),
