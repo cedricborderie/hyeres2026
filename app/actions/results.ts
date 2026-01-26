@@ -42,24 +42,24 @@ export async function getAllVoteResults(): Promise<ResultsData> {
       };
     }
 
-    // Get all votes to count unique voters and total votes
-    const { data: votesData, error: votesError } = await supabase
+    // Count total votes using SQL COUNT (no limit issue)
+    const { count: totalVotes, error: votesCountError } = await supabase
       .from("votes")
-      .select("proposal_id, session_id");
+      .select("*", { count: "exact", head: true });
 
-    if (votesError) {
-      console.error("Error fetching votes:", votesError);
+    if (votesCountError) {
+      console.error("Error counting votes:", votesCountError);
     }
 
-    // Count unique session IDs for total voters
-    const uniqueSessionIds = new Set<string>();
-    if (votesData) {
-      votesData.forEach((vote) => {
-        if (vote.session_id) {
-          uniqueSessionIds.add(vote.session_id);
-        }
-      });
+    // Count unique voters using optimized SQL function (no limit issue, single query)
+    const { data: uniqueVotersData, error: uniqueVotersError } = await supabase
+      .rpc("count_distinct_voters");
+
+    if (uniqueVotersError) {
+      console.error("Error counting unique voters:", uniqueVotersError);
     }
+
+    const uniqueVoters = uniqueVotersData || 0;
 
     // Use vote_count from proposals table (updated by triggers)
     const proposalVotes: ProposalVoteCount[] = (proposalsData || []).map((proposal) => ({
@@ -67,12 +67,9 @@ export async function getAllVoteResults(): Promise<ResultsData> {
       voteCount: proposal.vote_count || 0,
     }));
 
-    const uniqueVoters = uniqueSessionIds.size;
-    const totalVotes = votesData?.length || 0;
-
     return {
       totalVoters: uniqueVoters,
-      totalVotes: totalVotes,
+      totalVotes: totalVotes || 0,
       proposalVotes,
     };
   } catch (error) {
