@@ -1,31 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const VOTER_SESSION_MAX_AGE = 400 * 24 * 60 * 60; // 400 jours — persistant jusqu'en 2026
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  maxAge: VOTER_SESSION_MAX_AGE,
+  path: "/",
+};
+
 export function middleware(request: NextRequest) {
-  // Check if voter_session cookie exists
   const voterSession = request.cookies.get("voter_session");
+  const response = NextResponse.next();
 
-  // If no cookie, generate a new UUID and set it
-  if (!voterSession) {
-    const newSessionId = crypto.randomUUID();
-    
-    // Create response
-    const response = NextResponse.next();
-    
-    // Set secure cookie: HttpOnly, Secure, SameSite=Strict
-    response.cookies.set("voter_session", newSessionId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 365, // 1 year
-      path: "/",
-    });
+  const sessionId = voterSession?.value ?? crypto.randomUUID();
+  response.cookies.set("voter_session", sessionId, cookieOptions);
 
-    return response;
-  }
-
-  // Cookie exists, pass through
-  return NextResponse.next();
+  return response;
 }
 
 // Configure which routes the middleware runs on
