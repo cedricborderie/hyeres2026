@@ -1,173 +1,175 @@
-# Project Context & State
+# Contexte du projet & état du développement
 
-## 1. Vue d'ensemble (Overview)
-* **But du projet :** Plateforme citoyenne permettant aux habitants d'Hyères de voter pour des propositions politiques dans 3 catégories (Habitat, Mobilités, Agriculture) afin d'influencer les candidats aux élections municipales.
-* **Stack technique :** Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion, canvas-confetti, Lucide React, Supabase (PostgreSQL - à intégrer)
-* **Règles clés :** 
-  - Pas de connexion requise (vote anonyme via session_id localStorage)
-  - Mobile-first design
-  - TypeScript strict activé
-  - Utilisation de Tailwind CSS uniquement (pas de CSS in JS)
-  - Optimistic UI pour les votes
+Document de référence pour les assistants IA (ex. Gemini) : état actuel du site, architecture et conventions.
 
-## 2. État Actuel (Current State)
-* **Dernière modification :** 
-  - Intégration des données officielles de l'association dans `lib/data.ts` (5 recommandations Habitat, 15 propositions Mobilités, 1 placeholder Agriculture)
-  - Remplacement des données mock par le contenu officiel du manifeste
-  - Adaptation de la structure de données : `categoryId` au lieu de `category_id`, `summary`/`details` au lieu de `description`/`content_text`
-  - Mise à jour des composants pour utiliser la nouvelle structure
-  - Ajout du logo "Plateforme Citoyenne Hyèroise" et adaptation des couleurs au teal-vert (#4CA79F)
-  - **Intégration Supabase complète** : Server Actions pour les votes (`app/actions/vote.ts`)
-  - **Middleware Next.js** : Génération automatique de `session_id` via cookies HttpOnly sécurisés
-  - **Migrations Supabase** : 3 migrations créées (schéma initial, modification IDs en VARCHAR, insertion des propositions)
-  - **Section associations** : Ajout de 5 logos des associations partenaires sur la page d'accueil
-  - **Ajustements CSS** : Modifications de typographie et espacements sur la page d'accueil
+---
 
-* **Ce qui fonctionne :** 
-  - Page d'accueil (/) avec Hero, statistiques en temps réel, drapeau SVG, section associations avec logos
-  - Page propositions (/propositions) avec tabs par catégorie
-  - **Système de vote hybride** : 
-    - Cookies HttpOnly sécurisés pour le `session_id` (générés automatiquement par middleware)
-    - Server Actions pour soumettre les votes à Supabase (`submitVote`, `hasVotedForProposal`)
-    - Fallback localStorage si Supabase n'est pas configuré
-  - Page bilan (/bilan) avec récapitulatif des votes et partage social (WhatsApp, Facebook)
-  - Composant ProposalCard avec dialog "En savoir plus" et animation confetti au vote
-  - Header avec logo et navigation sticky
-  - 5 recommandations Habitat affichées
-  - 15 propositions Mobilités affichées
-  - Tab Agriculture avec placeholder "Bientôt disponible" et mailto
-  - **Gestion d'erreurs** : Messages d'erreur détaillés pour les votes (déjà voté, proposition introuvable, etc.)
-  - **Revalidation automatique** : Les pages se mettent à jour après un vote via `revalidatePath`
+## 1. Vue d’ensemble
 
-* **Ce qui est cassé/en cours :** 
-  - Statistiques en temps réel : Actuellement calculées depuis localStorage ou Supabase, mais pas de subscriptions real-time encore implémentées
-  - Limitation par IP : Documentée dans `docs/IP_LIMITATION.md` mais pas encore implémentée (nécessite Edge Functions Supabase)
-  - Les migrations Supabase doivent être exécutées manuellement sur l'instance Supabase
-  - Page d'erreur (`app/error.tsx`) créée mais pas encore testée en production
+* **Objectif :** Plateforme citoyenne pour les habitants d’Hyères : voter pour des propositions dans 3 axes (Habitat, Mobilités, Agriculture) afin d’éclairer le débat et d’engager les candidats aux municipales.
+* **Stack :** Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion, canvas-confetti, Lucide React, Supabase (PostgreSQL), Cloudflare Turnstile, jose (JWT).
+* **Règles importantes :**
+  * Pas de compte utilisateur : vote anonyme via `session_id` (cookie HttpOnly).
+  * Mobile-first, design accessible.
+  * TypeScript strict, Tailwind uniquement (pas de CSS-in-JS).
+  * Réponses et commentaires en **français**.
 
-## 3. Architecture & Fichiers
-* **Structure des dossiers :**
-  ```
-  app/
-    page.tsx              # Page d'accueil (/) - Hero, drapeau, associations, contenu
-    propositions/page.tsx # Interface de vote (/propositions)
-    bilan/page.tsx        # Récapitulatif et partage (/bilan)
-    layout.tsx            # Layout avec Header
-    globals.css           # Styles globaux + Inter font
-    error.tsx             # Page d'erreur globale
-    actions/
-      vote.ts             # Server Actions pour votes Supabase (submitVote, hasVotedForProposal)
-  
-  components/
-    Header.tsx            # Header sticky avec logo et navigation
-    ProposalCard.tsx      # Carte de proposition avec vote et dialog
-    LiveStats.tsx         # Statistiques des votes en temps réel
-  
-  lib/
-    data.ts               # Données officielles (categories + proposals)
-    utils.ts              # Utilitaires (session_id, gestion votes localStorage - fallback)
-    colors.ts             # Configuration couleurs (documentation)
-    supabase/
-      server.ts           # Client Supabase serveur (server-only)
-  
-  middleware.ts           # Génération automatique de session_id via cookies HttpOnly
-  
-  public/
-    drapeau.svg           # Drapeau de la plateforme (renommé de Drapeau.svg)
-    logo.svg              # Logo principal
-    logos/                 # Logos des associations partenaires
-      cil-des-rougieres.png
-      mobilites-presquile-giens.png
-      maltae.png
-      changer-d-ere.png
-      ecolieu-plan-du-pont.png
-  
+---
+
+## 2. État actuel du développement
+
+### Ce qui est en place et fonctionne
+
+* **Pages :**
+  * `/` — Accueil (Hero, « Notre démarche », 3 axes, bandeau jaune avec compteur + CTA « Commencer à voter »).
+  * `/propositions` — Vote par onglets (Habitat, Mobilités, Agriculture) ; cartes avec résumé, détail en modal, vote avec Turnstile.
+  * `/bilan` — Récap des votes de la session + partage (WhatsApp, Facebook).
+  * `/resultats` — Résultats publics (totaux votes, nombre de votants uniques, détail par proposition).
+  * `/partage` — Page de partage avec métadonnées OG dédiées.
+  * `/mentions-legales` — Mentions légales.
+  * `/debug` — Page de diagnostic (env, DB, Turnstile) pour le dev / staging.
+
+* **Fonctionnalités :**
+  * Vote : un vote par `session_id` + `proposal_id` ; session gérée par cookie HttpOnly (middleware).
+  * Cloudflare Turnstile sur la page propositions (anti-bot).
+  * Server Actions : vote (`vote.ts`), résultats (`results.ts`), newsletter (`newsletter.ts`), sécurité (`security.ts`).
+  * Stats en temps réel : total de votes et **nombre de votants uniques** (fonction SQL `count_distinct_voters()`).
+  * Newsletter : inscription email (table `newsletter`, Supabase).
+  * Données : **56 propositions** dans `lib/data.ts` (20 Habitat h1–h20, 14 Mobilités m1–m14, 22 Agriculture a1–a22) ; 3 catégories avec `manifestoUrl` (liens Google Drive).
+
+* **Données & contenu :**
+  * Source de vérité côté app : `lib/data.ts` (tableau `proposals` + `categories`).
+  * Export / import : `node scripts/export-propositions.cjs` → `exports/propositions-export.json` (et CSV) ; `node scripts/import-propositions.cjs` pour réinjecter dans `lib/data.ts`. Voir `exports/README.md`.
+
+* **Base de données :**
+  * Supabase : tables `proposals`, `votes`, `newsletter` ; RLS ; triggers pour `vote_count` ; clé `service_role` utilisée côté serveur pour les votes et les résultats.
+  * Migrations : de `001_initial_schema.sql` à `023_add_count_distinct_voters_function.sql` (incl. mise à jour titre H10, fonction comptage votants distincts).
+
+* **Déploiement :**
+  * **Production :** branche `main` → Vercel → domaine prod (ex. `www.hyeres2026.org`).
+  * **Préprod :** branche `staging` → Vercel Preview → domaine type `staging.hyeres2026.org` ou URL Vercel `*-git-staging-*.vercel.app`.
+  * Variables d’environnement : Production vs Preview (staging) ; **ne pas mélanger** les clés Supabase prod / préprod. Voir `docs/SEPARATION_PROD_STAGING.md`, `docs/GUIDE_DEPLOIEMENT_STAGING.md`, `docs/QUE_FAIRE_SI_CA_NE_DEPLOIE_PAS.md`.
+
+### Ce qui reste optionnel / non fait
+
+* Limitation par IP (documentée dans `docs/IP_LIMITATION.md`, non implémentée).
+* Subscriptions temps réel Supabase pour les stats (aujourd’hui : revalidation + lecture à la demande).
+* Tests automatisés (e2e, unitaires).
+
+---
+
+## 3. Architecture & fichiers principaux
+
+```
+app/
+  page.tsx                    # Accueil
+  layout.tsx                  # Layout global + Header
+  globals.css
+  error.tsx
+  propositions/page.tsx      # Page de vote
+  bilan/page.tsx              # Récap session + partage
+  resultats/page.tsx          # Résultats publics
+  partage/page.tsx            # Page partage (OG)
+  mentions-legales/page.tsx
+  debug/page.tsx              # Diagnostic
+  actions/
+    vote.ts                   # submitVote, hasVotedForProposal
+    results.ts                # totaux + votants uniques
+    newsletter.ts             # inscription newsletter
+    security.ts               # JWT / cookies
+    check-db.ts, test-vote.ts, debug-env.ts
+
+components/
+  Header.tsx
+  Footer.tsx
+  LiveStats.tsx               # Compteur votes / votants
+  ProposalCard.tsx            # Carte + modal détail + vote
+  VoteGatekeeper.tsx          # Wrapper Turnstile + envoi vote
+
+lib/
+  data.ts                     # categories, proposals (56), getProposalsByCategory
+  utils.ts
+  colors.ts
   supabase/
-    migrations/
-      001_initial_schema.sql              # Schéma initial (tables, triggers, fonctions)
-      002_modify_proposal_ids_to_string.sql # Modification IDs en VARCHAR(50)
-      003_insert_proposals.sql             # Insertion des 21 propositions
-  
-  docs/
-    IP_LIMITATION.md      # Documentation pour limitation par IP (non implémentée)
-  ```
+    server.ts                 # Client serveur
+    admin.ts                  # Service role si besoin
 
-* **Décisions d'architecture récentes :**
-  - Passage de données mock à données officielles avec nouvelle structure
-  - Utilisation de `categoryId` (camelCase) au lieu de `category_id` (snake_case)
-  - Categories utilisent maintenant `id`, `title`, `description`, `color` (classes Tailwind)
-  - Proposals utilisent `categoryId`, `summary`, `details`
-  - Couleurs primaires alignées sur le logo teal-vert (#4CA79F)
-  - Catégories utilisent maintenant des classes Tailwind directes (`bg-emerald-700`, `bg-pink-500`, `bg-yellow-600`)
-  - **Système de session sécurisé** : Migration de localStorage vers cookies HttpOnly gérés par middleware Next.js
-  - **Server Actions** : Votes gérés côté serveur pour sécurité et validation
-  - **IDs de propositions** : Changement de UUID vers VARCHAR(50) pour correspondre aux IDs dans `lib/data.ts` (h1, m1, a1, etc.)
-  - **Fallback gracieux** : L'application fonctionne même si Supabase n'est pas configuré (utilise localStorage)
-  - **Gestion d'erreurs robuste** : Messages d'erreur spécifiques pour chaque cas (déjà voté, proposition introuvable, etc.)
+middleware.ts                 # Cookie session_id, chemins protégés
 
-## 4. Prochaines étapes (Next Steps)
-* [x] Intégrer Supabase : configuration des variables d'environnement
-* [x] Créer les migrations SQL (001, 002, 003)
-* [ ] **Exécuter les migrations SQL sur Supabase** (à faire manuellement sur l'instance Supabase)
-* [x] Remplacer le stockage localStorage par synchronisation Supabase pour les votes (Server Actions implémentées)
-* [x] Ajouter la gestion d'erreurs pour les appels Supabase
-* [ ] Implémenter les subscriptions Supabase pour les statistiques en temps réel (remplacer polling par real-time)
-* [ ] Tester le flux complet en production : vote → Supabase → mise à jour en temps réel
-* [ ] Implémenter limitation par IP (voir `docs/IP_LIMITATION.md` - nécessite Edge Functions Supabase)
-* [ ] Déployer l'application (Vercel recommandé pour Next.js)
-* [ ] Optimiser les images des logos (compression, format WebP si possible)
+supabase/migrations/          # 001 à 023 (schéma, RLS, triggers, count_distinct_voters)
 
-## 5. Journal des changements (Log)
-* 2025-01-18: Ajout section associations et logos (Cursor) - Section "À l'initiative d'associations Hyèroises indépendantes" avec 5 logos en pleine largeur sur la page d'accueil
-* 2025-01-18: Ajustements CSS page d'accueil (Cursor) - Modifications typographie (tailles, poids), espacements, ajout flex sur éléments
-* 2025-01-18: Intégration Supabase complète (Cursor) - Server Actions pour votes, middleware pour cookies HttpOnly, client Supabase serveur
-* 2025-01-18: Migrations Supabase (Cursor) - Création de 3 migrations : schéma initial, modification IDs VARCHAR, insertion propositions
-* 2025-01-18: Renommage drapeau.svg (Cursor) - Correction casse du fichier (Drapeau.svg → drapeau.svg) pour compatibilité production
-* 2025-01-18: Intégration des données officielles (Cursor) - Remplacement des données mock par le contenu officiel du manifeste, mise à jour de la structure de données
-* 2025-01-18: Ajout du logo et adaptation des couleurs (Cursor) - Logo "Plateforme Citoyenne Hyèroise", couleurs primary adaptées au teal-vert (#4CA79F)
-* 2025-01-18: Création du Header avec navigation (Cursor) - Header sticky avec logo, bouton retour accueil, navigation active
-* 2025-01-18: Initialisation du projet (Cursor) - Scaffold Next.js 14, configuration Tailwind, création des pages et composants de base
+scripts/
+  export-propositions.cjs     # → exports/propositions-export.json + CSV
+  import-propositions.cjs     # JSON → lib/data.ts
 
-## 6. Détails Techniques Importants
+exports/
+  propositions-export.json   # Source pour import
+  propositions-export.csv
+  README.md
+```
 
-### Système de Vote
-* **Session ID** : Généré automatiquement par middleware Next.js, stocké dans cookie HttpOnly sécurisé
-* **Server Actions** : `app/actions/vote.ts` contient `submitVote()` et `hasVotedForProposal()`
-* **Sécurité** : Session ID lu depuis cookies serveur uniquement (pas manipulable côté client)
-* **Fallback** : Si Supabase non configuré, utilise localStorage (via `lib/utils.ts`)
-* **Contraintes** : Un vote par `session_id` + `proposal_id` (contrainte unique Supabase)
+* **Décisions importantes :**
+  * IDs de propositions : chaînes type `h1`, `m1`, `a1` (alignés avec la base).
+  * Session : cookie HttpOnly généré par le middleware ; lecture uniquement côté serveur.
+  * Votes : Server Actions + Supabase avec `SUPABASE_SERVICE_ROLE_KEY` pour contourner RLS côté serveur.
+  * Préprod et prod : deux projets Supabase distincts ; variables Vercel « Production » vs « Preview ».
 
-### Base de Données Supabase
-* **Structure** : 3 tables principales (`categories`, `proposals`, `votes`)
-* **IDs Propositions** : VARCHAR(50) pour correspondre à `lib/data.ts` (h1, m1, a1, etc.)
-* **Triggers** : Mise à jour automatique de `vote_count` via triggers PostgreSQL
-* **Migrations** : 3 fichiers SQL à exécuter dans l'ordre (001, 002, 003)
-* **Variables d'environnement** : `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+---
 
-### Assets & Images
-* **Drapeau** : `/public/drapeau.svg` (renommé pour compatibilité casse)
-* **Logos associations** : `/public/logos/*.png` (5 fichiers PNG)
-* **Logo principal** : `/public/logo.svg`
-* **Optimisation** : Utilisation de `next/image` pour toutes les images
+## 4. Déploiement & environnements
 
-### Limitations Actuelles
-* **Pas de limitation IP** : Documentée mais non implémentée (nécessite Edge Functions)
-* **Pas de real-time** : Statistiques mises à jour via revalidation, pas de subscriptions WebSocket
-* **Pas de cache** : Pas de stratégie de cache pour les données Supabase
+| Environnement | Branche Git | Domaine type        | Supabase          |
+|---------------|-------------|---------------------|-------------------|
+| Production    | `main`      | www.hyeres2026.org  | Projet production |
+| Préprod       | `staging`   | staging.hyeres2026.org ou *-git-staging-*.vercel.app | Projet préprod (ex. qxvnbkknudogisxtumfw) |
 
-### Configuration Requise
-* **Variables d'environnement** (`.env.local`) :
-  ```
-  NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-  NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-  ```
-* **Sans Supabase** : L'application fonctionne en mode fallback avec localStorage uniquement
-* **Avec Supabase** : Les votes sont synchronisés en base de données, les statistiques sont calculées depuis Supabase
+* Déploiement : push sur `main` ou `staging` → Vercel déclenche un build. Si rien ne part : voir `docs/QUE_FAIRE_SI_CA_NE_DEPLOIE_PAS.md` (Redeploy manuel, commit vide, config Git Vercel).
+* Migrations : à exécuter manuellement dans le bon projet Supabase (prod vs préprod). Voir `docs/EXECUTER_MIGRATIONS_STAGING.md`, `docs/GUIDE_DEPLOIEMENT_PRODUCTION.md`.
 
-### Notes pour Gemini/AI
-* **Langue** : Tous les commentaires et messages utilisateur sont en français
-* **Conventions** : camelCase pour variables JS/TS, snake_case pour base de données
-* **Sécurité** : Session ID toujours lu depuis cookies serveur, jamais depuis client
-* **TypeScript strict** : Mode strict activé, tous les types doivent être explicites
-* **Tailwind uniquement** : Pas de CSS-in-JS, utiliser uniquement les classes Tailwind
-* **Mobile-first** : Tous les designs doivent être pensés mobile d'abord
+---
+
+## 5. Données & contenu
+
+* **Catégories :** `habitat`, `mobilites`, `agriculture` — titre, description, couleur, `manifestoUrl`.
+* **Propositions :** 56 au total ; champs `id`, `categoryId`, `title`, `summary`, `details`, `external_link` (optionnel).
+* **Modifications récentes (ex.) :** H3 (moratoire Rougières), H9 (PPRI compétence État), H10 (retrait trait de côte), H12 (îlots de chaleur urbains), H16 (promoteurs privés). Pour mettre à jour en masse : éditer `exports/propositions-export.json`, puis `node scripts/import-propositions.cjs`.
+
+---
+
+## 6. Sécurité & anti-abus
+
+* **Turnstile :** clés dans Vercel (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) ; domaine staging à autoriser dans le dashboard Cloudflare si besoin.
+* **Session :** cookie HttpOnly, sécurisé en production (`secure`, `sameSite`).
+* **JWT :** `JWT_SECRET_KEY` en env pour la signature des cookies si utilisée.
+* **RLS Supabase :** activé sur `votes` ; l’app utilise `service_role` côté serveur pour insérer et lire les agrégats.
+
+---
+
+## 7. Prochaines étapes possibles (backlog)
+
+* [ ] Exécuter les migrations sur l’instance Supabase cible si nouvelle env.
+* [ ] Limitation par IP (Edge Functions Supabase) si besoin.
+* [ ] Subscriptions temps réel pour les stats (optionnel).
+* [ ] Tests e2e / unitaires.
+* [ ] Optimisation images (logos, OG).
+
+---
+
+## 8. Journal des changements (résumé récent)
+
+* Import des propositions mises à jour (h3 moratoire, h9 PPRI, h12 îlots urbains, h16 promoteurs) + scripts export/import.
+* Comptage votants uniques en base (migration 023, `count_distinct_voters()`).
+* Titre H10 : « Anticiper le retrait du trait de côte » (migration 022).
+* Guides : déploiement staging, préprod, « que faire si ça ne déploie pas », Turnstile staging.
+* Correctifs RLS et permissions Supabase (migrations 011–018), liens manifestes (021).
+
+---
+
+## 9. Notes pour les assistants IA (Gemini, etc.)
+
+* **Langue :** Répondre et commenter en **français**.
+* **Conventions :** camelCase en JS/TS ; snake_case en base ; IDs propositions en minuscules (h1, m1, a1).
+* **Sécurité :** Ne jamais exposer `SUPABASE_SERVICE_ROLE_KEY` ou `TURNSTILE_SECRET_KEY` côté client. Session ID lu uniquement côté serveur.
+* **Tailwind :** Pas de CSS-in-JS ; utiliser les classes Tailwind et `tailwind-merge` / `clsx` si besoin.
+* **Données :** La source de vérité des textes des propositions est `lib/data.ts`. Pour des changements en lot, utiliser le flux export JSON → édition → import.
+* **Docs :** Beaucoup de procédures (déploiement, Turnstile, migrations, RLS) sont dans `docs/` ; s’y référer avant de proposer des changements d’infra ou de déploiement.
