@@ -20,8 +20,8 @@ export interface VoteResult {
  */
 export async function getVotedProposalIds(): Promise<string[]> {
   try {
-    // If Supabase is not configured, return empty array
-    if (!isSupabaseConfigured() || !supabase) {
+    // Use admin client to read votes (session_id is sensitive data protected by RLS)
+    if (!isSupabaseAdminConfigured() || !supabaseAdmin) {
       return [];
     }
 
@@ -32,7 +32,7 @@ export async function getVotedProposalIds(): Promise<string[]> {
       return [];
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("votes")
       .select("proposal_id")
       .eq("session_id", sessionId);
@@ -57,8 +57,8 @@ export async function getVotedProposalIds(): Promise<string[]> {
  */
 export async function hasVotedForProposal(proposalId: string): Promise<boolean> {
   try {
-    // If Supabase is not configured, return false (user hasn't voted)
-    if (!isSupabaseConfigured() || !supabase) {
+    // Use admin client to read votes (session_id is sensitive data protected by RLS)
+    if (!isSupabaseAdminConfigured() || !supabaseAdmin) {
       return false;
     }
 
@@ -69,20 +69,18 @@ export async function hasVotedForProposal(proposalId: string): Promise<boolean> 
       return false;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("votes")
       .select("id")
       .eq("proposal_id", proposalId)
       .eq("session_id", sessionId)
-      .maybeSingle(); // Use maybeSingle() instead of single() to avoid error when no result
+      .maybeSingle();
 
-    // If error or no data, user hasn't voted
     if (error) {
       console.error("Error checking vote status:", error);
       return false;
     }
 
-    // Return true only if data exists
     return !!data;
   } catch (error) {
     console.error("Error checking vote status:", error);
@@ -234,7 +232,7 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
       // PostgreSQL error code 23505 = Unique violation
       if (error.code === "23505" || error.message.includes("unique") || error.message.includes("duplicate")) {
         // Get current vote count for optimistic UI
-        const { count } = await supabase
+        const { count } = await supabaseAdmin
           .from("votes")
           .select("*", { count: "exact", head: true })
           .eq("proposal_id", proposalId);
@@ -283,8 +281,8 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
     revalidatePath("/");
     revalidatePath("/propositions");
 
-    // Get updated vote count (using anon client for read)
-    const { count } = await supabase
+    // Get updated vote count using admin client (bypasses RLS)
+    const { count } = await supabaseAdmin
       .from("votes")
       .select("*", { count: "exact", head: true })
       .eq("proposal_id", proposalId);
@@ -311,11 +309,11 @@ export async function submitVote(proposalId: string): Promise<VoteResult> {
  */
 export async function removeVote(proposalId: string): Promise<VoteResult> {
   try {
-    // If Supabase is not configured, return error
-    if (!isSupabaseConfigured() || !supabase) {
+    // Use admin client for all votes operations (session_id is sensitive, protected by RLS)
+    if (!isSupabaseAdminConfigured() || !supabaseAdmin) {
       return {
         success: false,
-        message: "Base de données non configurée. Contactez l'administrateur.",
+        message: "Configuration serveur incomplète. Contactez l'administrateur.",
       };
     }
 
@@ -330,7 +328,6 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // Validate proposalId
     if (!proposalId) {
       return {
         success: false,
@@ -338,8 +335,8 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       };
     }
 
-    // First, verify the vote exists and get its details for debugging
-    const { data: existingVote, error: fetchError } = await supabase
+    // Find the vote using admin client (bypasses RLS)
+    const { data: existingVote, error: fetchError } = await supabaseAdmin
       .from("votes")
       .select("id, proposal_id, session_id, created_at")
       .eq("proposal_id", proposalId)
@@ -355,13 +352,12 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
     }
 
     if (!existingVote) {
-      // Vote doesn't exist, so deletion is effectively successful
       console.log("Vote doesn't exist, already deleted or never existed:", { proposalId, sessionId });
-      const { count } = await supabase
+      const { count } = await supabaseAdmin
         .from("votes")
         .select("*", { count: "exact", head: true })
         .eq("proposal_id", proposalId);
-      
+
       return {
         success: true,
         voteCount: count || 0,
@@ -372,14 +368,13 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
       voteId: existingVote.id,
       proposalId,
       sessionId,
-      existingVote,
     });
 
-    // Delete vote from Supabase
-    const { data: deletedData, error: deleteError } = await supabase
+    // Delete vote using admin client (bypasses RLS)
+    const { data: deletedData, error: deleteError } = await supabaseAdmin
       .from("votes")
       .delete()
-      .eq("id", existingVote.id) // Use the vote ID directly for more reliable deletion
+      .eq("id", existingVote.id)
       .select();
 
     if (deleteError) {
@@ -387,73 +382,24 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
         error: deleteError,
         errorCode: deleteError.code,
         errorMessage: deleteError.message,
-        errorDetails: deleteError.details,
-        errorHint: deleteError.hint,
         proposalId,
         sessionId,
         voteId: existingVote.id,
       });
-      
-      // Check if it's a permission error (RLS)
-      if (deleteError.code === "42501" || deleteError.message?.includes("permission") || deleteError.message?.includes("policy") || deleteError.message?.includes("row-level security")) {
-        return {
-          success: false,
-          message: "Erreur de permissions RLS. Exécutez la migration 009_enable_vote_deletion_rls.sql dans Supabase pour activer la suppression des votes.",
-        };
-      }
-      
+
       return {
         success: false,
         message: `Erreur lors de la suppression du vote: ${deleteError.message || "Veuillez réessayer."}`,
       };
     }
 
-    // Check if deletion returned data (means it was successful)
     if (deletedData && deletedData.length > 0) {
       console.log("Vote successfully deleted:", {
         deletedVote: deletedData[0],
         proposalId,
         sessionId,
       });
-    } else {
-      // No data returned - might mean deletion was blocked by RLS
-      console.warn("DELETE returned no data - might be blocked by RLS:", {
-        proposalId,
-        sessionId,
-        voteId: existingVote.id,
-      });
     }
-
-    // Wait a moment for the deletion to complete
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Verify deletion was successful by checking if vote still exists
-    const { data: stillExists, error: checkError } = await supabase
-      .from("votes")
-      .select("id")
-      .eq("id", existingVote.id)
-      .maybeSingle();
-    
-    if (checkError && checkError.code !== "PGRST116") { // PGRST116 = no rows returned (expected)
-      console.error("Error checking if vote still exists:", checkError);
-    }
-    
-    if (stillExists) {
-      // Vote still exists - deletion failed silently (likely RLS blocking)
-      console.error("Vote still exists after delete attempt - RLS likely blocking:", { 
-        proposalId, 
-        sessionId,
-        voteId: existingVote.id,
-        stillExists,
-      });
-      return {
-        success: false,
-        message: "La suppression a échoué silencieusement. Les politiques RLS bloquent probablement la suppression. Exécutez la migration 009_enable_vote_deletion_rls.sql dans Supabase.",
-      };
-    }
-    
-    // Vote doesn't exist - deletion was successful
-    console.log("Vote successfully removed:", { proposalId, sessionId });
 
     // Success: revalidate paths to update vote counts
     revalidatePath("/");
@@ -461,36 +407,11 @@ export async function removeVote(proposalId: string): Promise<VoteResult> {
     revalidatePath("/bilan");
     revalidatePath("/resultats");
 
-    // Wait a bit for the trigger to update vote_count, then get updated count
-    // The trigger should update proposals.vote_count automatically
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    // Get updated vote count from votes table (more reliable than proposals.vote_count)
-    const { count } = await supabase
+    // Get updated vote count
+    const { count } = await supabaseAdmin
       .from("votes")
       .select("*", { count: "exact", head: true })
       .eq("proposal_id", proposalId);
-
-    // Also verify that proposals.vote_count was updated by the trigger
-    const { data: proposalData } = await supabase
-      .from("proposals")
-      .select("vote_count")
-      .eq("id", proposalId)
-      .single();
-
-    // If trigger didn't work, manually update vote_count
-    if (proposalData && proposalData.vote_count !== count) {
-      console.warn("Trigger didn't update vote_count, manually updating:", {
-        proposalId,
-        storedCount: proposalData.vote_count,
-        actualCount: count,
-      });
-      
-      await supabase
-        .from("proposals")
-        .update({ vote_count: count || 0 })
-        .eq("id", proposalId);
-    }
 
     return {
       success: true,

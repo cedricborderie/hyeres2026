@@ -1,6 +1,7 @@
 "use server";
 
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/server";
+import { supabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabase/admin";
 
 export interface ProposalVoteCount {
   proposalId: string;
@@ -16,10 +17,11 @@ export interface ResultsData {
 /**
  * Server Action to get all vote results from Supabase.
  * Returns vote counts for all proposals and total statistics.
+ * Uses admin client for votes (protected by RLS) and anon client for proposals (public).
  */
 export async function getAllVoteResults(): Promise<ResultsData> {
   try {
-    // If Supabase is not configured, return empty results
+    // Need both clients: anon for proposals (public), admin for votes (RLS protected)
     if (!isSupabaseConfigured() || !supabase) {
       return {
         totalVoters: 0,
@@ -28,7 +30,7 @@ export async function getAllVoteResults(): Promise<ResultsData> {
       };
     }
 
-    // Get all proposals with their vote_count (updated by triggers)
+    // Get all proposals with their vote_count (public data, anon client OK)
     const { data: proposalsData, error: proposalsError } = await supabase
       .from("proposals")
       .select("id, vote_count");
@@ -42,8 +44,25 @@ export async function getAllVoteResults(): Promise<ResultsData> {
       };
     }
 
-    // Count total votes using SQL COUNT (no limit issue)
-    const { count: totalVotes, error: votesCountError } = await supabase
+    // Use vote_count from proposals table (updated by triggers) - no RLS issue
+    const proposalVotes: ProposalVoteCount[] = (proposalsData || []).map((proposal) => ({
+      proposalId: proposal.id,
+      voteCount: proposal.vote_count || 0,
+    }));
+
+    // For votes table operations, use admin client (RLS protected)
+    if (!isSupabaseAdminConfigured() || !supabaseAdmin) {
+      // Fallback: sum up from proposals.vote_count
+      const totalVotes = proposalVotes.reduce((sum, p) => sum + p.voteCount, 0);
+      return {
+        totalVoters: 0,
+        totalVotes,
+        proposalVotes,
+      };
+    }
+
+    // Count total votes using admin client (bypasses RLS)
+    const { count: totalVotes, error: votesCountError } = await supabaseAdmin
       .from("votes")
       .select("*", { count: "exact", head: true });
 
@@ -51,8 +70,8 @@ export async function getAllVoteResults(): Promise<ResultsData> {
       console.error("Error counting votes:", votesCountError);
     }
 
-    // Count unique voters using optimized SQL function (no limit issue, single query)
-    const { data: uniqueVotersData, error: uniqueVotersError } = await supabase
+    // Count unique voters using admin client (bypasses RLS)
+    const { data: uniqueVotersData, error: uniqueVotersError } = await supabaseAdmin
       .rpc("count_distinct_voters");
 
     if (uniqueVotersError) {
@@ -60,12 +79,6 @@ export async function getAllVoteResults(): Promise<ResultsData> {
     }
 
     const uniqueVoters = uniqueVotersData || 0;
-
-    // Use vote_count from proposals table (updated by triggers)
-    const proposalVotes: ProposalVoteCount[] = (proposalsData || []).map((proposal) => ({
-      proposalId: proposal.id,
-      voteCount: proposal.vote_count || 0,
-    }));
 
     return {
       totalVoters: uniqueVoters,
