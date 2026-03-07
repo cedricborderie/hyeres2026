@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Building2, Bike, Sprout } from "lucide-react";
+import { Building2, Bike, Sprout, Megaphone, Facebook, MessageCircle, Linkedin } from "lucide-react";
 import { getCategoryColorClasses } from "@/lib/utils";
 import { engagementPodiums, getPodiumByThemeId } from "@/lib/engagement-data";
 import { getNotationByThemeId } from "@/lib/notation-data";
@@ -16,25 +17,60 @@ const categoryIcons: Record<string, typeof Building2> = {
   agriculture: Sprout,
 };
 
-export default function EngagementPage() {
-  const [activeTab, setActiveTab] = useState<"habitat" | "mobilites" | "agriculture">("habitat");
+type ThemeId = (typeof themeIds)[number];
+
+export default function EngagementsContent({
+  initialTheme = "habitat",
+}: {
+  initialTheme?: ThemeId;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<ThemeId>(initialTheme);
+  const [mounted, setMounted] = useState(false);
+
+  // Synchroniser l'onglet actif avec l'URL (ex. /engagements/agriculture)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  useEffect(() => {
+    const segment = pathname?.split("/").pop();
+    if (segment && themeIds.includes(segment as ThemeId)) {
+      setActiveTab(segment as ThemeId);
+    }
+  }, [pathname]);
+
   const podium = getPodiumByThemeId(activeTab);
   const colors = getCategoryColorClasses(activeTab);
 
+  const shareUrl = mounted && typeof window !== "undefined" ? window.location.origin + pathname : "";
+  const shareMessage = shareUrl
+    ? `Découvre l'évaluation des candidats sur le podium ${podium?.title ?? "Engagements"} : ${shareUrl}`
+    : "";
+  const whatsappUrl = shareUrl ? `https://wa.me/?text=${encodeURIComponent(shareMessage)}` : "";
+  const facebookUrl = shareUrl ? `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}` : "";
+  const linkedinUrl = shareUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}` : "";
+
+  const handleTabChange = (themeId: ThemeId) => {
+    setActiveTab(themeId);
+    router.push(`/engagements/${themeId}`, { scroll: false });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (!podium) {
     return (
-      <main className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white">
         <div className="container mx-auto px-4 py-12">
           <p className="text-gray-600">Thématique introuvable.</p>
         </div>
-      </main>
+      </div>
     );
   }
 
   const gridOrder: ("2nd" | "1st" | "3rd")[] = ["2nd", "1st", "3rd"];
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 md:py-12 max-w-full">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 text-center">
           Évaluation des engagements des candidats
@@ -54,7 +90,7 @@ export default function EngagementPage() {
             return (
               <button
                 key={themeId}
-                onClick={() => setActiveTab(themeId)}
+                onClick={() => handleTabChange(themeId)}
                 className="relative flex items-center gap-2 px-6 py-4 text-lg font-medium transition-all duration-200 [&_svg]:shrink-0"
                 style={{
                   color: isActive ? themeColors.text : "rgb(107, 114, 128)",
@@ -100,7 +136,7 @@ export default function EngagementPage() {
           </h2>
         </motion.div>
 
-        {/* Grille podium : 2e gauche, 1er centre, 3e droite. items-end = bas des 3 blocs alignés ; hauteurs 424/384/344 = 40px d'écart entre les hauts. */}
+        {/* Grille podium */}
         <motion.div
           key={`podium-${activeTab}`}
           initial={{ opacity: 0 }}
@@ -119,8 +155,8 @@ export default function EngagementPage() {
           ))}
         </motion.div>
 
-        {/* Tableau de notation de la rubrique active uniquement */}
-        <div className="mt-12 max-w-[880px] mx-auto">
+        {/* Tableau de notation */}
+        <div className="max-w-[880px] mx-auto">
           {(() => {
             const notation = getNotationByThemeId(activeTab);
             const themeColors = getCategoryColorClasses(activeTab);
@@ -135,6 +171,59 @@ export default function EngagementPage() {
           })()}
         </div>
 
+        {/* Bloc de partage */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="max-w-[880px] mx-auto mt-12"
+        >
+          <div className="bg-white rounded-lg border-2 border-primary-500 p-8 text-center shadow-md">
+            <Megaphone className="w-12 h-12 text-primary-600 mx-auto mb-4" aria-hidden />
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Partagez le podium {podium.title}
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Partagez l&apos;évaluation des candidats pour amplifier l&apos;impact citoyen.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {whatsappUrl && (
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <MessageCircle className="w-5 h-5" aria-hidden />
+                  Partager sur WhatsApp
+                </a>
+              )}
+              {facebookUrl && (
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  <Facebook className="w-5 h-5" aria-hidden />
+                  Partager sur Facebook
+                </a>
+              )}
+              {linkedinUrl && (
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-[#0A66C2] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <Linkedin className="w-5 h-5" aria-hidden />
+                  Partager sur LinkedIn
+                </a>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Onglets en bas */}
         <div className="flex flex-wrap justify-center gap-1 mt-12 pt-8 border-t border-gray-200">
           {themeIds.map((themeId) => {
@@ -146,10 +235,7 @@ export default function EngagementPage() {
             return (
               <button
                 key={themeId}
-                onClick={() => {
-                  setActiveTab(themeId);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
+                onClick={() => handleTabChange(themeId)}
                 className="relative flex items-center gap-2 px-6 py-4 text-lg font-medium transition-all duration-200 [&_svg]:shrink-0"
                 style={{
                   color: isActive ? themeColors.text : "rgb(107, 114, 128)",
@@ -171,6 +257,6 @@ export default function EngagementPage() {
           })}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

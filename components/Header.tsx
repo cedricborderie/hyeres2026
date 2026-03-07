@@ -63,9 +63,9 @@ export default function Header() {
               Résultats
             </Link>
             <Link
-              href="/engagement"
+              href="/engagements"
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                pathname === "/engagement"
+                pathname === "/engagements"
                   ? "bg-primary-600 text-white"
                   : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
               }`}
@@ -135,10 +135,10 @@ export default function Header() {
                 Résultats
               </Link>
               <Link
-                href="/engagement"
+                href="/engagements"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-3 rounded-lg font-medium transition-colors ${
-                  pathname === "/engagement"
+                  pathname === "/engagements"
                     ? "bg-primary-600 text-white"
                     : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
                 }`}

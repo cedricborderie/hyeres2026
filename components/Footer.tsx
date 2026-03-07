@@ -10,14 +10,14 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [shareUrl, setShareUrl] = useState("https://hyeres2026.org");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Use window.location.origin in browser, fallback to production URL
-    if (typeof window !== "undefined") {
-      setShareUrl(window.location.origin);
-    }
+    setMounted(true);
   }, []);
+
+  // URL de partage uniquement après montage pour éviter l'erreur d'hydratation
+  const shareUrl = mounted && typeof window !== "undefined" ? window.location.origin : "https://hyeres2026.org";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

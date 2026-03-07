@@ -10,13 +10,14 @@ type NotationTableProps = {
 };
 
 export default function NotationTable({ theme, accentColor }: NotationTableProps) {
-  const { title, titleAccent, candidates, rows } = theme;
+  const { title, candidates, rows } = theme;
 
   return (
     <section className="mb-10">
-      <h2 className="text-[22px] font-normal text-gray-900 mb-5">
-        {title.split(titleAccent)[0]}
-        <span style={{ color: accentColor }}>{titleAccent}</span>
+      <h2 className="text-[20px] font-normal text-gray-900 mb-5">
+        Découvrez les engagements des candidats en{" "}
+        <span style={{ color: accentColor }}>{title}</span>
+        , mesure par mesure.
       </h2>
       <div className="w-full rounded-[10px] overflow-hidden border-2 border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         <div className="overflow-x-auto">

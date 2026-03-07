@@ -5,10 +5,12 @@ import Image from "next/image";
 import { ArrowRight, Building2, Bike, Sprout } from "lucide-react";
 import { motion } from "framer-motion";
 import LiveStats from "@/components/LiveStats";
+import LightboxHome from "@/components/LightboxHome";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
+      <LightboxHome />
       {/* Hero + Bande jaune : jaune remonte 30px, pied du drapeau dans le jaune ; hero fond transparent sur 30px */}
       <div className="flex flex-col bg-white relative">
         {/* Hero : fond blanc sauf 90px du bas (transparent). pb plus grand sur mobile/iPad pour que le texte ne chevauche pas le jaune */}
