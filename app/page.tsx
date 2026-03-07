@@ -32,7 +32,7 @@ export default function Home() {
                 Nos associations s'unissent pour proposer une plateforme citoyenne non partisane.
                 <br />
                 <br />
-                Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois axes : <span className="font-bold" style={{ color: "#14B8A6" }}>urbanisme durable</span>, <span className="font-bold" style={{ color: "#EC4899" }}>mobilités douces</span> et <span className="font-bold" style={{ color: "#EAB308" }}>agriculture locale</span>.
+                Faites entendre votre voix auprès des futurs élus. Découvrez et votez pour nos recommandations concrètes autour de trois axes : <span className="font-bold text-[#14B8A6]">urbanisme durable</span>, <span className="font-bold text-[#EC4899]">mobilités douces</span> et <span className="font-bold text-[#EAB308]">agriculture locale</span>.
                 <br />
                 <br />
                 Engageons ensemble les futurs élus pour un territoire harmonieux.

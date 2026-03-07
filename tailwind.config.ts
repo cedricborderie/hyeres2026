@@ -18,6 +18,7 @@ const config: Config = {
     "bg-[#EC4899]",
     "hover:bg-[#db2777]",
     "border-[#EC4899]",
+    "text-[#EAB308]",
     "text-yellow-700",
     "hover:text-yellow-800",
     "bg-[#FFE175]",

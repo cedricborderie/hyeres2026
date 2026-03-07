@@ -12,9 +12,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 relative">
-      <div className="container mx-auto px-4 max-w-full">
-        <div className="flex items-center justify-between h-16 md:h-20">
+    <header className="sticky top-0 z-50 w-full shrink-0 border-b border-gray-200 bg-white shadow-sm">
+      <div className="container mx-auto w-full max-w-full px-4">
+        <div className="flex h-16 min-h-[4rem] items-center justify-between md:h-20 md:min-h-[5rem]">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
@@ -61,6 +61,16 @@ export default function Header() {
               }`}
             >
               Résultats
+            </Link>
+            <Link
+              href="/engagement"
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                pathname === "/engagement"
+                  ? "bg-primary-600 text-white"
+                  : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
+              }`}
+            >
+              Engagements
             </Link>
             <Link
               href="/bilan"
@@ -123,6 +133,17 @@ export default function Header() {
                 }`}
               >
                 Résultats
+              </Link>
+              <Link
+                href="/engagement"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-3 rounded-lg font-medium transition-colors ${
+                  pathname === "/engagement"
+                    ? "bg-primary-600 text-white"
+                    : "text-gray-700 hover:bg-primary-50 hover:text-primary-600"
+                }`}
+              >
+                Engagements
               </Link>
               <Link
                 href="/bilan"

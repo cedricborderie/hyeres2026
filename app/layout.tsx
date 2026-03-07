@@ -32,10 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${questrial.variable} overflow-x-hidden`}>
-      <body className={`${questrial.className} flex flex-col min-h-screen overflow-x-hidden max-w-full`}>
+      <body className={`${questrial.className} flex min-h-screen flex-col overflow-x-hidden bg-white max-w-full`}>
         <VoteGatekeeper>
           <Header />
-          <main className="flex-1">
+          <main className="min-h-0 flex-1 flex-shrink-0">
             {children}
           </main>
           <Footer />
