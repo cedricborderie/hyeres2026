@@ -12,9 +12,31 @@ const questrial = Questrial({
   variable: '--font-questrial',
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hyeres2026.org";
+
 export const metadata: Metadata = {
   title: "Plateforme Citoyenne Hyèroise",
   description: "Participez aux élections locales d'Hyères en votant pour les propositions qui vous concernent",
+  openGraph: {
+    title: "Reprenons la parole pour les municipales ! | Plateforme Citoyenne Hyèroise",
+    description: "Participez aux élections locales d'Hyères en votant pour les propositions qui vous concernent",
+    url: baseUrl,
+    siteName: "Plateforme Citoyenne Hyèroise",
+    images: [
+      {
+        url: `${baseUrl}/og-site.png`,
+        width: 1200,
+        height: 630,
+        alt: "Plateforme Citoyenne Hyèroise — Reprenons la parole pour les municipales !",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Reprenons la parole pour les municipales !",
+    description: "Participez aux élections locales d'Hyères en votant pour les propositions qui vous concernent",
+    images: [`${baseUrl}/og-site.png`],
+  },
 };
 
 export const viewport: Viewport = {
