@@ -34,7 +34,7 @@ export default function Footer() {
     });
   };
 
-  const shareMessage = `Découvrez la Plateforme Citoyenne Hyèroise et votez pour les propositions qui vous concernent ! 🗳️\n\n${shareUrl}`;
+  const shareMessage = `Découvrez la Plateforme Citoyenne Hyèroise et l'évaluation des candidats sur le podium.\n\n${shareUrl}`;
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;

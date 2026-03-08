@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Plateforme Citoyenne Hyèroise",
     images: [
       {
-        url: `${baseUrl}/og-site.png`,
+        url: `${baseUrl}/og-accueil.png`,
         width: 1200,
         height: 630,
         alt: "Plateforme Citoyenne Hyèroise — Reprenons la parole pour les municipales !",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Reprenons la parole pour les municipales !",
     description: "Participez aux élections locales d'Hyères en votant pour les propositions qui vous concernent",
-    images: [`${baseUrl}/og-site.png`],
+    images: [`${baseUrl}/og-accueil.png`],
   },
 };
 
