@@ -13,6 +13,8 @@ const questrial = Questrial({
 });
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hyeres2026.org";
+// Cache-busting: URL d'image différente à chaque déploiement (Vercel injecte VERCEL_GIT_COMMIT_SHA)
+const ogImageUrl = `${baseUrl}/og-accueil.png?v=${process.env.VERCEL_GIT_COMMIT_SHA ?? "site"}`;
 
 export const metadata: Metadata = {
   title: "Plateforme Citoyenne Hyèroise",
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "Plateforme Citoyenne Hyèroise",
     images: [
       {
-        url: `${baseUrl}/og-accueil.png`,
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: "Plateforme Citoyenne Hyèroise — Reprenons la parole pour les municipales !",
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Reprenons la parole pour les municipales !",
     description: "Participez aux élections locales d'Hyères en votant pour les propositions qui vous concernent",
-    images: [`${baseUrl}/og-accueil.png`],
+    images: [ogImageUrl],
   },
 };
 
