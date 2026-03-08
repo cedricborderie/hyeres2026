@@ -129,12 +129,13 @@ export default function PodiumCard({
   extraSpaceAboveRing = 0,
 }: PodiumCardProps) {
   const style = rankStyles[candidate.rank];
+  // Mobile: 1er en premier, 2e en deuxième, 3e en troisième. Desktop (md+): 2e | 1er | 3e (podium).
   const orderClass =
     gridOrder === "1st"
-      ? "order-2"
+      ? "order-1 md:order-2"
       : gridOrder === "2nd"
-        ? "order-1"
-        : "order-3";
+        ? "order-2 md:order-1"
+        : "order-3 md:order-3";
 
   return (
     <div className={`flex min-w-0 flex-col items-stretch ${orderClass}`}>
