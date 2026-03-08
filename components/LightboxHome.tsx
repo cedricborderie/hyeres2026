@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Building2, Bike, Sprout } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function LightboxHome() {
@@ -66,18 +67,7 @@ export default function LightboxHome() {
               <div className="flex flex-col gap-2 mb-6">
                 {/* Urbanisme et Habitat → /engagements/habitat */}
                 <div className="flex items-center gap-3 py-2.5 px-3.5 pl-3.5 rounded-xl border-[1.5px] bg-teal-50/80 border-teal-200">
-                  <div className="w-[22px] h-[22px] shrink-0 flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <rect x="3" y="3" width="7" height="18" rx="1" />
-                      <rect x="14" y="8" width="7" height="13" rx="1" />
-                      <line x1="3" y1="21" x2="21" y2="21" />
-                      <line x1="6" y1="7" x2="7" y2="7" />
-                      <line x1="6" y1="11" x2="7" y2="11" />
-                      <line x1="6" y1="15" x2="7" y2="15" />
-                      <line x1="17" y1="12" x2="18" y2="12" />
-                      <line x1="17" y1="16" x2="18" y2="16" />
-                    </svg>
-                  </div>
+                  <Building2 className="w-5 h-5 shrink-0" style={{ color: "#14B8A6" }} aria-hidden />
                   <span className="text-[13.5px] text-gray-800 flex-1">Urbanisme et Habitat</span>
                   <Link
                     href="/engagements/habitat"
@@ -89,15 +79,7 @@ export default function LightboxHome() {
 
                 {/* Vélo et Mobilités → /engagements/mobilites */}
                 <div className="flex items-center gap-3 py-2.5 px-3.5 pl-3.5 rounded-xl border-[1.5px] bg-pink-50/80 border-pink-200">
-                  <div className="w-[22px] h-[22px] shrink-0 flex items-center justify-center">
-                    <svg width="22" height="16" viewBox="0 0 28 18" fill="none" stroke="#EC4899" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <circle cx="5" cy="13" r="4" />
-                      <circle cx="23" cy="13" r="4" />
-                      <polyline points="9,13 11,6 17,6" />
-                      <polyline points="11,6 14,13 19,9" />
-                      <circle cx="17" cy="4" r="1.5" fill="#EC4899" stroke="none" />
-                    </svg>
-                  </div>
+                  <Bike className="w-5 h-5 shrink-0" style={{ color: "#EC4899" }} aria-hidden />
                   <span className="text-[13.5px] text-gray-800 flex-1">Vélo et Mobilités</span>
                   <Link
                     href="/engagements/mobilites"
@@ -109,13 +91,7 @@ export default function LightboxHome() {
 
                 {/* Agriculture & Alimentation → /engagements/agriculture */}
                 <div className="flex items-center gap-3 py-2.5 px-3.5 pl-3.5 rounded-xl border-[1.5px] bg-amber-50/80 border-amber-200">
-                  <div className="w-[22px] h-[22px] shrink-0 flex items-center justify-center">
-                    <svg width="18" height="20" viewBox="0 0 20 24" fill="none" stroke="#b45309" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <line x1="10" y1="23" x2="10" y2="10" />
-                      <path d="M10 18 C10 18 4 16 4 9 C4 9 9 8 12 12" />
-                      <path d="M10 14 C10 14 15 11 16 5 C16 5 11 4 8 9" />
-                    </svg>
-                  </div>
+                  <Sprout className="w-5 h-5 shrink-0" style={{ color: "#C4A035" }} aria-hidden />
                   <span className="text-[13.5px] text-gray-800 flex-1">Agriculture & Alimentation</span>
                   <Link
                     href="/engagements/agriculture"
