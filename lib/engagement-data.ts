@@ -97,7 +97,7 @@ export const engagementPodiums: PodiumTheme[] = [
         points: [
           { title: "Maillage de la commune", description: "Itinéraires précis et très cohérents." },
           { title: "Vélos en libre service", description: "Déploiement d'une offre pour faciliter l'accès." },
-          { title: "Sécurité et stationnement", description: "Sécurisation des parcours et développement du stationnement vélo." },
+          { title: "Cohérence et crédibilité", description: "lien entre déclarations et mesures." },
         ],
       },
     ],
@@ -125,7 +125,7 @@ export const engagementPodiums: PodiumTheme[] = [
         points: [
           { title: "Expérimentation SSAL", description: "Sécurité Sociale de l'Alimentation pour tous." },
           { title: "Mesures au programme", description: "Bonne conscience des contraintes et difficultés." },
-          { title: "Urgence alimentaire", description: "Remise en culture pour la résilience." },
+          { title: "Urgence alimentaire", description: "création d'une régie municipale de l'alimentation" },
         ],
       },
       {
@@ -134,9 +134,9 @@ export const engagementPodiums: PodiumTheme[] = [
         personName: "François Cornileau",
         percentage: 60,
         points: [
-          { title: "Halle de producteurs", description: "Mise en place avec jardins communautaires." },
+          { title: "Halle de producteurs", description: "Mise en place avec les producteurs locaux" },
           { title: "Urgence de préserver", description: "Préserver et remettre en culture les terres." },
-          { title: "Alimentation saine", description: "Orienter vers le durable, engagements moins précis." },
+          { title: "Vigilance sur la réalité des engagements", description: "au regard des réalisations lors du précédent mandat" },
         ],
       },
     ],

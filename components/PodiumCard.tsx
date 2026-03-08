@@ -156,26 +156,24 @@ export default function PodiumCard({
         className={`rounded-xl border-2 px-4 pt-5 flex min-h-0 flex-col items-center box-border ${style.pillar}`}
         style={{ paddingBottom: PADDING_BOTTOM_PX }}
       >
-        {/* Espace au-dessus du ring (variable par rang) → pourcentages alignés, min 40px. */}
+        {/* Espace au-dessus du ring (variable par rang) → pourcentages alignés. Ring fixe, points en dessous (hauteur variable OK). */}
         <div
           className="w-full flex-shrink-0"
           style={{ height: style.spaceAboveRingPx + extraSpaceAboveRing }}
           aria-hidden
         />
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center overflow-y-auto">
-          <div className="flex w-full flex-shrink-0 flex-col items-center">
-            <ProgressRing
-              percentage={candidate.percentage}
-              ringBg={style.ringBg}
-              ringFg={style.ringFg}
-            />
-            <ul className="mt-3.5 w-full flex flex-shrink-0 flex-col gap-2 list-none p-0 m-0">
-              {candidate.points.map((point, i) => (
-                <PointItem key={i} point={point} accentColor={accentColor} />
-              ))}
-            </ul>
-          </div>
+        <div className="flex w-full flex-shrink-0 flex-col items-center">
+          <ProgressRing
+            percentage={candidate.percentage}
+            ringBg={style.ringBg}
+            ringFg={style.ringFg}
+          />
         </div>
+        <ul className="mt-3.5 w-full flex-shrink-0 flex flex-col gap-2 list-none p-0 m-0">
+          {candidate.points.map((point, i) => (
+            <PointItem key={i} point={point} accentColor={accentColor} />
+          ))}
+        </ul>
       </div>
     </div>
   );
