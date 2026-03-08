@@ -28,7 +28,7 @@ const rankStyles = {
   3: {
     label: "3ème",
     badge: "bg-slate-100 text-slate-600 border-slate-300",
-    pillar: "bg-slate-100 border-slate-300 min-h-[344px]",
+    pillar: "bg-slate-100 border-slate-300 min-h-[304px]",
     spaceAboveRingPx: 40,
     ringBg: "#cbd5e1",
     ringFg: "#64748b",
@@ -153,27 +153,31 @@ export default function PodiumCard({
         <div className="text-[13px] text-gray-500">{candidate.personName}</div>
       </div>
       <div
-        className={`rounded-xl border-2 px-4 pt-5 flex min-h-0 flex-col items-center box-border ${style.pillar}`}
+        className={`rounded-xl border-2 px-4 pt-5 flex min-h-0 flex-col items-center box-border relative ${style.pillar}`}
         style={{ paddingBottom: PADDING_BOTTOM_PX }}
       >
-        {/* Espace au-dessus du ring (variable par rang) → pourcentages alignés. Ring fixe, points en dessous (hauteur variable OK). */}
+        {/* Ring fixe depuis le bas du pilier → pourcentages alignés même si le pilier s'agrandit. */}
         <div
-          className="w-full flex-shrink-0"
-          style={{ height: style.spaceAboveRingPx + extraSpaceAboveRing }}
+          className="absolute left-1/2 -translate-x-1/2 z-10"
+          style={{ bottom: 254 }}
           aria-hidden
-        />
-        <div className="flex w-full flex-shrink-0 flex-col items-center">
+        >
           <ProgressRing
             percentage={candidate.percentage}
             ringBg={style.ringBg}
             ringFg={style.ringFg}
           />
         </div>
-        <ul className="mt-3.5 w-full flex-shrink-0 flex flex-col gap-2 list-none p-0 m-0">
-          {candidate.points.map((point, i) => (
-            <PointItem key={i} point={point} accentColor={accentColor} />
-          ))}
-        </ul>
+        {/* Spacer flex-1 + bloc points (min-height pour aligner 1re ligne). Pas de scroll, le pilier grandit avec le contenu. */}
+        <div className="flex-1 min-h-0 w-full" aria-hidden />
+        <div className="w-full flex-shrink-0 flex flex-col items-center" style={{ minHeight: 284 }}>
+          <div className="w-full flex-shrink-0" style={{ height: 84 }} aria-hidden />
+          <ul className="mt-0 w-full flex flex-col gap-2 list-none p-0 m-0 min-h-[200px]">
+            {candidate.points.map((point, i) => (
+              <PointItem key={i} point={point} accentColor={accentColor} />
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
