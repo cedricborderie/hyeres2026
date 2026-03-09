@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Building2, Bike, Sprout, Megaphone, Facebook, MessageCircle, Linkedin } from "lucide-react";
+import Link from "next/link";
+import { Building2, Bike, Sprout, Megaphone, Facebook, MessageCircle, Linkedin, FileText } from "lucide-react";
 import { getCategoryColorClasses } from "@/lib/utils";
 import { engagementPodiums, getPodiumByThemeId } from "@/lib/engagement-data";
 import { getNotationByThemeId } from "@/lib/notation-data";
@@ -170,6 +171,30 @@ export default function EngagementsContent({
             );
           })()}
         </div>
+
+        {/* Consultez notre méthodologie */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="max-w-[880px] mx-auto mt-10"
+        >
+          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 text-center shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Consultez notre méthodologie
+            </h2>
+            <p className="text-gray-600 text-sm mb-4 max-w-xl mx-auto">
+              Découvrez comment nous avons évalué les engagements des candidats et la grille de lecture utilisée.
+            </p>
+            <Link
+              href="/methodologie"
+              className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors"
+            >
+              <FileText className="w-5 h-5" aria-hidden />
+              Consulter la méthodologie
+            </Link>
+          </div>
+        </motion.div>
 
         {/* Bloc de partage */}
         <motion.div
