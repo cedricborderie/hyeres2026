@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Building2, Bike, Sprout, Megaphone, Facebook, MessageCircle, Linkedin, FileText } from "lucide-react";
+import { Building2, Bike, Sprout, Megaphone, Facebook, MessageCircle, Linkedin, FileText, ArrowRight } from "lucide-react";
 import { getCategoryColorClasses } from "@/lib/utils";
 import { engagementPodiums, getPodiumByThemeId } from "@/lib/engagement-data";
 import { getNotationByThemeId } from "@/lib/notation-data";
@@ -281,6 +281,25 @@ export default function EngagementsContent({
             );
           })}
         </div>
+
+        {/* Dossier de presse — même design que "Votre Opinion Compte" sur la home */}
+        <section className="bg-[#FFE175] rounded-[28px] p-8 md:p-12 text-center max-w-4xl mx-auto mt-12">
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6">
+            Consulter l&apos;intégralité de l&apos;étude dans le dossier de presse
+          </h2>
+          <p className="text-lg text-gray-700 leading-[20px] mb-8">
+            Téléchargez le dossier de presse pour découvrir la présentation complète des résultats de l&apos;évaluation des engagements des candidats.
+          </p>
+          <a
+            href="/dossier-presse-resultats-plateforme-citoyenne.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-lg text-base font-semibold hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
+          >
+            Télécharger le dossier de presse
+            <ArrowRight className="w-5 h-5" aria-hidden />
+          </a>
+        </section>
       </div>
     </div>
   );
