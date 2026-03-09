@@ -112,9 +112,9 @@ export const engagementPodiums: PodiumTheme[] = [
         personName: "Nicolas Massuco",
         percentage: 63,
         points: [
-          { title: "ZAC des Rougières", description: "Annulation du projet d'urbanisation." },
-          { title: "Cantines 100% locales", description: "Engagements forts mais non chiffrés." },
-          { title: "Ferme municipale", description: "Urgence de préserver les terres agricoles." },
+          { title: "Protection des terres agricoles", description: "annulation du projet d'aménagement de la ZAC des Rougieres" },
+          { title: "Cantines scolaires", description: "100% produits locaux" },
+          { title: "Remise en culture", description: "Ferme municipale pédagogique et de production" },
         ],
       },
       {
@@ -123,9 +123,9 @@ export const engagementPodiums: PodiumTheme[] = [
         personName: "Caroline Moulin",
         percentage: 67,
         points: [
-          { title: "Expérimentation SSAL", description: "Sécurité Sociale de l'Alimentation pour tous." },
-          { title: "Mesures au programme", description: "Bonne conscience des contraintes et difficultés." },
-          { title: "Urgence alimentaire", description: "création d'une régie municipale de l'alimentation" },
+          { title: "Accessibilité des produits sains et locaux", description: "Sécurité sociale de l'alimentation pour toutes et tous" },
+          { title: "Soutien à la production locale", description: "Création d'une régie municipale de l'alimentation" },
+          { title: "Engagements dans le programme", description: "Bonne conscience des contraintes et difficultés" },
         ],
       },
       {
@@ -134,9 +134,9 @@ export const engagementPodiums: PodiumTheme[] = [
         personName: "François Cornileau",
         percentage: 60,
         points: [
-          { title: "Halle de producteurs", description: "Mise en place avec les producteurs locaux" },
-          { title: "Urgence de préserver", description: "Préserver et remettre en culture les terres." },
-          { title: "Vigilance sur la réalité des engagements", description: "au regard des réalisations lors du précédent mandat" },
+          { title: "Soutien aux producteurs", description: "Halle des producteurs locaux" },
+          { title: "Remise en culture", description: "Ferme pédagogique et jardins communautaires aux Rougières" },
+          { title: "Engagements dans le programme", description: "vigilance sur la réalité des engagements au regard du précédent mandat" },
         ],
       },
     ],

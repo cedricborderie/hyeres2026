@@ -285,7 +285,7 @@ export default function EngagementsContent({
         {/* Dossier de presse — même design que "Votre Opinion Compte" sur la home */}
         <section className="bg-[#FFE175] rounded-[28px] p-8 md:p-12 text-center max-w-4xl mx-auto mt-12">
           <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6">
-            Consulter l&apos;intégralité de l&apos;étude dans le dossier de presse
+            Consultez l&apos;intégralité de l&apos;étude dans le dossier de presse
           </h2>
           <p className="text-lg text-gray-700 leading-[20px] mb-8">
             Téléchargez le dossier de presse pour découvrir la présentation complète des résultats de l&apos;évaluation des engagements des candidats.
